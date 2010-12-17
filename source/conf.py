@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Docs'
+project = u'bkonkle'
 copyright = u'2010, Brandon Konkle'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -164,7 +164,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Docsdoc'
+htmlhelp_basename = 'bkonkledoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -178,7 +178,7 @@ htmlhelp_basename = 'Docsdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Docs.tex', u'Docs Documentation',
+  ('index', 'bkonkle.tex', u'bkonkle Documentation',
    u'Brandon Konkle', 'manual'),
 ]
 
@@ -211,6 +211,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'docs', u'Docs Documentation',
+    ('index', 'bkonkle', u'bkonkle Documentation',
      [u'Brandon Konkle'], 1)
 ]
