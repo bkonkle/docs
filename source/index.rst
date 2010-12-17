@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to bkonkle's documentation!
+Welcome to Brandon Konkle's documentation!
 ================================
 
 Contents:
