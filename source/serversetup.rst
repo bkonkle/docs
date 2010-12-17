@@ -648,7 +648,7 @@ Add a file to */etc/supervisor/conf.d*::
 
 	$ sudo emacs /etc/supervisor/conf.d/mysite.conf
 
-.. code-block:: conf
+.. code-block:: cfg
 
 	[program:myapp]
 	command=/usr/local/sbin/uwsgi
