@@ -1,0 +1,761 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Manual Server Setup &mdash; bkonkle v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bkonkle v1.0 documentation" href="index.html" />
+    <link rel="prev" title="New Dev Machine Setup" href="newdevmachine.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="newdevmachine.html" title="New Dev Machine Setup"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="manual-server-setup">
+<span id="serversetup"></span><h1>Manual Server Setup<a class="headerlink" href="#manual-server-setup" title="Permalink to this headline">¶</a></h1>
+<p>This document details how to manually provision a new server.  It uses a web
+stack based on nginx and uwsgi, hosted on Rackspace Cloud.</p>
+<div class="section" id="initial-setup">
+<h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Permalink to this headline">¶</a></h2>
+<p>Create an Ubuntu 10.10 (Maverick) server instance.  Once the build is complete,
+log in and install emacs.  Configure it as the default:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>apt-get install emacs23-nox
+<span class="nv">$ </span>update-alternatives --config editor
+</pre></div>
+</div>
+<p>Set up sudo access:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>visudo
+</pre></div>
+</div>
+<p>Under this line:</p>
+<div class="highlight-none"><div class="highlight"><pre>Defaults        env_reset
+</pre></div>
+</div>
+<p>Add the following lines to preserve editor and Django environment settings:</p>
+<div class="highlight-none"><div class="highlight"><pre>Defaults        env_keep += &quot;EDITOR VISUAL&quot;
+Defaults        env_keep += &quot;DJANGO_SETTINGS_MODULE PYTHONPATH&quot;
+</pre></div>
+</div>
+<p>Then, under this line:</p>
+<div class="highlight-none"><div class="highlight"><pre>%sudo   ALL=(ALL) ALL
+</pre></div>
+</div>
+<p>Add:</p>
+<div class="highlight-none"><div class="highlight"><pre>%admin  ALL=(ALL) NOPASSWD:ALL
+</pre></div>
+</div>
+<p>Now, add a new user and the admin group:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>adduser myuser
+<span class="nv">$ </span>addgroup admin
+<span class="nv">$ </span>adduser myuser admin
+</pre></div>
+</div>
+<p>Switch to the new user, and add your public key to authorized_keys:</p>
+<div class="highlight-sh"><pre>$ su - myuser
+$ mkdir .ssh
+$ cd !$
+$ wget http://mydomain.com/path/to/my/pubkey/id_rsa.pub
+$ mv id_rsa.pub authorized_keys</pre>
+</div>
+<p>Log out of both users, and then make sure you can SSH in using the new user
+and invoke sudo with no problems.  You can now lock down the root account:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo passwd -l root
+</pre></div>
+</div>
+<p>Upgrade anything that&#8217;s out of date:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get update
+<span class="nv">$ </span>sudo apt-get dist-upgrade
+</pre></div>
+</div>
+<p>Install various packages that are often useful:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install bash-completion python-software-properties
+</pre></div>
+</div>
+</div>
+<div class="section" id="database-servers">
+<h2>Database Servers<a class="headerlink" href="#database-servers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="postfix">
+<span id="id1"></span><h3>Postfix<a class="headerlink" href="#postfix" title="Permalink to this headline">¶</a></h3>
+<p>We want the servers to be able to send mail, so install postfix and mailx:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install postfix bsd-mailx
+</pre></div>
+</div>
+</div>
+<div class="section" id="postgres">
+<h3>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h3>
+<p>First, set your locale since Rackspace doesn&#8217;t set a default:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo update-locale <span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8 <span class="o">&amp;&amp;</span> <span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8
+</pre></div>
+</div>
+<p>For a standard install:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install postgresql postgresql-server-dev-8.4 postgresql-contrib-8.4
+</pre></div>
+</div>
+<p>If you want to use streaming replication:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-software-properties
+<span class="nv">$ </span>sudo add-apt-repository ppa:pitti/postgresql
+<span class="nv">$ </span>sudo apt-get update
+<span class="nv">$ </span>sudo apt-get install postgresql postgresql-server-dev-9.0 postgresql-contrib-9.0
+</pre></div>
+</div>
+<p>Set a password for the <em>postgresql</em> user:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo passwd postgres
+<span class="nv">$ </span>sudo -u postgres psql
+
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \password postgres</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \q</span>
+</pre></div>
+</div>
+<p>Set up a new user for the site being deployed on this instance:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo -u postgres createuser myproject
+<span class="nv">$ </span>sudo -u postgres psql
+
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \password myproject</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \q</span>
+</pre></div>
+</div>
+<p>Change the access settings:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/postgresql/8.4/main/pg_hba.conf
+</pre></div>
+</div>
+<p>Add the line below.  This restricts access to only allow other instances on the
+public Rackspace Cloud.  This will likely need to be edited for each project.</p>
+<div class="highlight-cfg"><pre>host    all         all         184.106.0.0/16        md5</pre>
+</div>
+<p>Edit the configuration file:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/postgresql/8.4/main/postgresql.conf
+</pre></div>
+</div>
+<p>Consider changing the following settings:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span class="na">listen_addresses</span> <span class="o">=</span> <span class="s">&#39;&lt;server IP&gt;&#39;</span>
+
+<span class="na">max_connections</span> <span class="o">=</span> <span class="s">250</span>
+
+<span class="na">ssl</span> <span class="o">=</span> <span class="s">false</span>
+
+<span class="na">shared_buffers</span> <span class="o">=</span> <span class="s">&lt;Divide the amount of RAM by 4 and use the value here&gt;</span>
+
+<span class="na">work_mem</span> <span class="o">=</span> <span class="s">8MB</span>
+
+<span class="na">checkpoint_segments</span> <span class="o">=</span> <span class="s">24</span>
+
+<span class="na">effective_cache_size</span> <span class="o">=</span> <span class="s">&lt;Divide the amount of RAM by 2&gt;</span>
+</pre></div>
+</div>
+<p>You will likely need to raise the kernel&#8217;s SHMMAX parameter.  To find out how
+much it needs to be changed to, try to restart <em>postgres</em>.</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/postgresql restart
+</pre></div>
+</div>
+<p>You should see something like this:</p>
+<div class="highlight-none"><div class="highlight"><pre> * Restarting PostgreSQL 8.4 database server
+ * The PostgreSQL server failed to start. Please check the log output:
+2010-11-07 23:15:24 UTC FATAL:  could not create shared memory segment: Invalid argument
+2010-11-07 23:15:24 UTC DETAIL:  Failed system call was shmget(key=5432001, size=282058752, 03600).
+2010-11-07 23:15:24 UTC HINT:  This error usually means that PostgreSQL&#39;s request for a shared memory segment exceeded your kernel&#39;s SHMMAX parameter.  You can either reduce the request size or reconfigure the kernel with larger SHMMAX.  To reduce the request size (currently 282058752 bytes), reduce PostgreSQL&#39;s shared_buffers parameter (currently 32768) and/or its max_connections parameter (currently 253).
+</pre></div>
+</div>
+<p>The request size is what you are looking for.  Above, it shows a request size
+of 282058752.  Edit sysctl.conf:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/sysctl.conf
+</pre></div>
+</div>
+<p>Add:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span class="na">kernel.shmmax</span><span class="o">=</span><span class="s">282058752</span>
+</pre></div>
+</div>
+<p>Then reboot the server:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo reboot
+</pre></div>
+</div>
+</div>
+<div class="section" id="geodjango">
+<span id="id2"></span><h3>GeoDjango<a class="headerlink" href="#geodjango" title="Permalink to this headline">¶</a></h3>
+<p>Follow the steps at the <a class="reference external" href="http://docs.djangoproject.com/en/1.2/ref/contrib/gis/install/#building-from-source">Django Docs</a> site to build from source.  Things don&#8217;t
+typically work well when the requirements are installed via Ubuntu packages.</p>
+<p>It&#8217;s a good idea to use <tt class="docutils literal"><span class="pre">checkinstall</span></tt> install of <tt class="docutils literal"><span class="pre">make</span> <span class="pre">install</span></tt> so that
+packages are created for each custom-compiled requirement.  These can then be
+easily shared between identical instances or easily removed later.</p>
+<p>Place a <em>dpkg</em> hold on the custom packages so they&#8217;re not overwritten:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nb">echo</span> <span class="s2">&quot;geos hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;proj hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;postgis hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;gdal hold&quot;</span> | sudo dpkg --set-selections
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>Make sure to run <em>ldconfig</em>, or bad things will happen and it will be
+difficult to track down:</p>
+<div class="last highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ldconfig
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="postgis-template">
+<h3>Postgis Template<a class="headerlink" href="#postgis-template" title="Permalink to this headline">¶</a></h3>
+<p>Create a template for <em>postgis</em> databases.</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">POSTGIS_SQL_PATH</span><span class="o">=</span><span class="sb">`</span>pg_config --sharedir<span class="sb">`</span>/contrib/postgis-1.5
+sudo -u postgres createdb -E UTF8 template_postgis
+sudo -u postgres createlang -d template_postgis plpgsql
+sudo -u postgres psql -d postgres -c <span class="s2">&quot;UPDATE pg_database SET datistemplate=&#39;true&#39; WHERE datname=&#39;template_postgis&#39;;&quot;</span>
+sudo -u postgres psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/postgis.sql
+sudo -u postgres psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/spatial_ref_sys.sql
+sudo -u postgres psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON geometry_columns TO PUBLIC;&quot;</span>
+sudo -u postgres psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON spatial_ref_sys TO PUBLIC;&quot;</span>
+</pre></div>
+</div>
+<p>Also, copy the utils from the <em>postgis</em> tar package to a subdirectory of
+<em>/usr/local/share</em>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># If you installed GeoDjango&#39;s requirements from packages, you&#39;ll need to</span>
+<span class="c"># download the tar archive.</span>
+<span class="nv">$ </span>wget http://postgis.refractions.net/download/postgis-1.5.2.tar.gz
+<span class="nv">$ </span>tar -xzf postgis-1.5.2.tar.gz
+<span class="nv">$ </span><span class="nb">cd </span>postgis-1.5.2
+
+<span class="nv">$ </span>sudo mkdir /usr/local/share/postgresql-8.4-postgis/
+<span class="nv">$ </span>sudo cp -r utils /usr/local/share/postgresql-8.4-postgis/
+</pre></div>
+</div>
+</div>
+<div class="section" id="nfs-sharing">
+<h3>NFS Sharing<a class="headerlink" href="#nfs-sharing" title="Permalink to this headline">¶</a></h3>
+<p>If you would like to use streaming replication, you will need to set up NFS
+sharing between database servers.  Otherwise, this section can be skipped.</p>
+<div class="section" id="standby">
+<h4>Standby<a class="headerlink" href="#standby" title="Permalink to this headline">¶</a></h4>
+<p>Find out the user and group IDs for <em>postgres</em>. You&#8217;ll use them in the next
+step:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>id -u postgres
+104
+
+<span class="nv">$ </span>id -g postgres
+108
+</pre></div>
+</div>
+<p>Install NFS:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install nfs-kernel-server nfs-common portmap
+</pre></div>
+</div>
+<p>If you&#8217;re on Rackspace, the init.d script will need to be modified because
+of Rackspace&#8217;s custom kernels:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/init.d/nfs-kernel-server
+</pre></div>
+</div>
+<p>Comment out these lines:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># See if our running kernel supports the NFS kernel server</span>
+<span class="k">if</span> <span class="o">[</span> -f /proc/kallsyms <span class="o">]</span> <span class="o">&amp;&amp;</span> ! grep -qE <span class="s1">&#39; nfsd_serv     &#39;</span> /proc/kallsyms; <span class="k">then</span>
+<span class="k">       </span>log_warning_msg <span class="s2">&quot;Not starting $DESC: no support in current kernel.&quot;</span>
+       <span class="nb">exit </span>0
+<span class="k">fi</span>
+</pre></div>
+</div>
+<p>Continue setting up NFS:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo dpkg-reconfigure portmap
+
+<span class="c"># Select &#39;no&#39;</span>
+
+<span class="nv">$ </span>sudo restart portmap
+
+<span class="nv">$ </span>sudo emacs /etc/exports
+</pre></div>
+</div>
+<p>Add a line like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>/var/backups/postgres/mysite    184.106.0.0/16(rw,async,no_subtree_check,all_squash,anonuid=104,anongid=108)
+</pre></div>
+</div>
+<p>Restart and export:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/nfs-kernel-server restart
+
+<span class="nv">$ </span>sudo exportfs -a
+</pre></div>
+</div>
+<p>Make sure to create the /var/backups/postgres/mysite directory and give it
+the correct permissions so that the NFS client can access it.</p>
+</div>
+<div class="section" id="primary">
+<h4>Primary<a class="headerlink" href="#primary" title="Permalink to this headline">¶</a></h4>
+<p>The primary needs to mount the NFS share so that WAL archives can be saved
+there:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install nfs-common portmap
+<span class="nv">$ </span>sudo emacs /etc/fstab
+</pre></div>
+</div>
+<p>Add a line like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>standby-server:/var/backups/postgres/mysite /var/backups/postgres/mysite nfs rsize=8192,wsize=8192,timeo=14,intr 0 0
+</pre></div>
+</div>
+<p>Then mount it:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo mount /var/backups/postgres/mysite
+</pre></div>
+</div>
+<p>Make sure to create the /var/backups/postgres/mysite directory so that the NFS
+share can be mounted there.</p>
+<p>Test the NFS connection by touching a new file on the primary machine, and
+making sure it can be removed on the standby machine.</p>
+</div>
+</div>
+<div class="section" id="replication">
+<h3>Replication<a class="headerlink" href="#replication" title="Permalink to this headline">¶</a></h3>
+<p>This section can be skipped if you are not setting up streaming replication.</p>
+<div class="section" id="id3">
+<h4>Primary<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p>Edit <em>postgresql.conf</em> to enable WAL archiving:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">wal_level</span> <span class="o">=</span> hot_standby
+
+<span class="nv">archive_mode</span> <span class="o">=</span> on
+
+<span class="nv">archive_command</span> <span class="o">=</span> <span class="s1">&#39;cp -i %p /var/backups/postgres/mysite/%f &lt;/dev/null&#39;</span>
+
+<span class="nv">max_wal_senders</span> <span class="o">=</span> 1
+</pre></div>
+</div>
+<p>Create a superuser for streaming replication:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo -u postgres createuser -s mysitestandby
+<span class="nv">$ </span>sudo -u postgres psql
+
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \password mysitestandby</span>
+<span class="nv">postgres</span><span class="o">=</span><span class="c"># \q</span>
+</pre></div>
+</div>
+<p>Modify <em>pg_hba.conf</em> to allow the replication user to connect:</p>
+<div class="highlight-sh"><div class="highlight"><pre>host    replication     mysitestandby     184.106.0.0/16        md5
+</pre></div>
+</div>
+</div>
+<div class="section" id="base-backup">
+<h4>Base Backup<a class="headerlink" href="#base-backup" title="Permalink to this headline">¶</a></h4>
+<p>A base backup needs to be created.  This must be a filesystem-level backup,
+not a logical backup like the <em>pg_dump</em> command creates.  On the primary
+server, run the <em>pg_start_backup</em> command:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">pg_start_backup</span><span class="p">(</span><span class="s1">&#39;base_backup&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Then, tar and bzip the data directory:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nb">cd</span> /var/lib/postgresql/9.0/
+sudo tar -cjf postgres-data.tar.bz2 main
+</pre></div>
+</div>
+<p>This will take awhile.  Once it&#8217;s done, run the <em>pg_stop_backup</em> command:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="n">pg_stop_backup</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>Then, copy the archive to the standby server.  Make sure postgresql is not
+running on the standby, and unzip the archive:</p>
+<div class="highlight-sh"><div class="highlight"><pre>sudo /etc/init.d/postgres stop
+<span class="nb">cd</span> /var/lib/postgresql/9.0/
+<span class="c"># Make SURE you&#39;re on the standby server here</span>
+sudo rm -rf main
+sudo tar -xjf ~/postgres-data.tar.bz2
+sudo chown -R postgres:postgres main
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h4>Standby<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>Edit <em>postgresql.conf</em> to enable hot standby:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">hot_standby</span> <span class="o">=</span> on
+<span class="nv">max_standby_archive_delay</span> <span class="o">=</span> 30s
+<span class="nv">max_standby_streaming_delay</span> <span class="o">=</span> 30s
+</pre></div>
+</div>
+<p>Adjust the delay settings to a value appropriate for your project.</p>
+<p>Create a <em>recovery.conf</em> in <em>/var/lib/postgresql/9.0/main/</em> similar to this:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">standby_mode</span> <span class="o">=</span> <span class="s1">&#39;on&#39;</span>
+<span class="nv">primary_conninfo</span> <span class="o">=</span> <span class="s1">&#39;host=184.106.207.82 port=5432 user=mysitestandby password=mypassword&#39;</span>
+<span class="nv">restore_command</span> <span class="o">=</span> <span class="s1">&#39;cp /var/backups/postgres/mysite/%f %p&#39;</span>
+<span class="nv">trigger_file</span> <span class="o">=</span> <span class="s1">&#39;/var/backups/postgres/mysite/trigger_file&#39;</span>
+<span class="nv">archive_cleanup_command</span> <span class="o">=</span> <span class="s1">&#39;pg_archivecleanup /var/backups/postgres/mysite %r&#39;</span>
+</pre></div>
+</div>
+<p>The postgresql-contrib-9.0 package doesn&#8217;t link pg_archivecleanup into the
+path.  Do so manually:</p>
+<div class="highlight-sh"><div class="highlight"><pre>sudo ln -s /usr/lib/postgresql/9.0/bin/pg_archivecleanup /usr/bin/
+</pre></div>
+</div>
+<p>Now you can start up postgres:</p>
+<div class="highlight-sh"><div class="highlight"><pre>sudo /etc/init.d/postgresql start
+</pre></div>
+</div>
+</div>
+<div class="section" id="smoke-test">
+<h4>Smoke Test<a class="headerlink" href="#smoke-test" title="Permalink to this headline">¶</a></h4>
+<p>To make sure everything is working properly, first check and make sure wal
+sender and receiver processes are live on the primary and standby servers.  On
+the primary, run <tt class="docutils literal"><span class="pre">ps</span> <span class="pre">-ef</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&quot;wal</span> <span class="pre">sender&quot;</span></tt> and make sure
+you see a wal sender process.  On the standby run <tt class="docutils literal"><span class="pre">ps</span> <span class="pre">-ef</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">&quot;wal</span>
+<span class="pre">receiver&quot;</span></tt>.</p>
+<p>Next, create a test table on the primary:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">test</span> <span class="p">(</span><span class="n">test</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">30</span><span class="p">));</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">test</span> <span class="k">VALUES</span> <span class="p">(</span><span class="s1">&#39;Testing 1 2 3&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>On the standby, query the table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">test</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You should see the following output:</p>
+<div class="highlight-none"><div class="highlight"><pre>     test
+---------------
+ Testing 1 2 3
+(1 row)
+</pre></div>
+</div>
+<p>You can then delete your test table:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">test</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="web-servers">
+<h2>Web Servers<a class="headerlink" href="#web-servers" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="postfix-and-geodjango">
+<h3>Postfix and GeoDjango<a class="headerlink" href="#postfix-and-geodjango" title="Permalink to this headline">¶</a></h3>
+<p>Follow the instructions for <a class="reference internal" href="#postfix"><em>Postfix</em></a> and <a class="reference internal" href="#geodjango"><em>GeoDjango</em></a> above.</p>
+</div>
+<div class="section" id="supervisord">
+<h3>Supervisord<a class="headerlink" href="#supervisord" title="Permalink to this headline">¶</a></h3>
+<p>Install supervisord with apt-get:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install supervisor
+</pre></div>
+</div>
+</div>
+<div class="section" id="uwsgi">
+<h3>uWSGI<a class="headerlink" href="#uwsgi" title="Permalink to this headline">¶</a></h3>
+<p>uWSGI needs to be compiled from source.  Install some requirements first,
+though:</p>
+<div class="highlight-sh"><div class="highlight"><pre>sudo apt-get install build-essential python-dev libxml2-dev
+wget http://projects.unbit.it/downloads/uwsgi-0.9.6.5.tar.gz
+tar -xzf uwsgi-0.9.6.5.tar.gz
+<span class="nb">cd </span>uwsgi-0.9.6.5
+make -f Makefile.Py26
+</pre></div>
+</div>
+<p>Copy the executable to the local sbin directory:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo cp uwsgi /usr/local/sbin
+</pre></div>
+</div>
+<p>Also, copy the default uwsgi settings to the /etc/nginx directory:</p>
+<div class="highlight-sh"><div class="highlight"><pre>sudo mkdir /etc/nginx
+sudo cp nginx/uwsgi_params /etc/nginx
+<span class="nb">cd</span> ..
+</pre></div>
+</div>
+</div>
+<div class="section" id="nginx">
+<h3>Nginx<a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h3>
+<p>First, install build dependencies and grab the source:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install libssl-dev
+<span class="nv">$ </span>sudo apt-get build-dep nginx
+<span class="nv">$ </span>apt-get <span class="nb">source </span>nginx
+<span class="nv">$ </span><span class="nb">cd </span>nginx-0.7*
+</pre></div>
+</div>
+<p>Define the <tt class="docutils literal"><span class="pre">CONFIGURE_OPTS</span></tt> environment variable when building the package to
+add <em>uwsgi</em> and <em>ssl</em>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ CONFIGURE_OPTS</span><span class="o">=</span><span class="s2">&quot;--add-module=../uwsgi-0.9.6.5/nginx --with-http_ssl_module&quot;</span> dpkg-buildpackage
+<span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="nv">$ </span>sudo dpkg -i nginx*.deb
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;nginx hold&quot;</span> | sudo dpkg --set-selections
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;nginx-dbg hold&quot;</span> | sudo dpkg --set-selections
+</pre></div>
+</div>
+<p>Starting with nginx-0.8.41, you can add
+&#8211;http-uwsgi-temp-path=/var/lib/nginx/uwsgi to the <tt class="docutils literal"><span class="pre">CONFIGURE_OPTS</span></tt> so that
+the temp files are kept in the right place. Until then, you&#8217;ll need to create a
+<em>/usr/local/nginx/uwsgi_temp</em> folder to use for the temp files:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo mkdir -p /usr/local/nginx/uwsgi_temp
+</pre></div>
+</div>
+</div>
+<div class="section" id="git">
+<h3>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h3>
+<p>Install the most recent version of git from the PPA:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo add-apt-repository ppa:git-core/ppa
+<span class="nv">$ </span>sudo apt-get update
+<span class="nv">$ </span>sudo apt-get install git-core
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="site-setup">
+<h2>Site Setup<a class="headerlink" href="#site-setup" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-setup">
+<h3>Basic Setup<a class="headerlink" href="#basic-setup" title="Permalink to this headline">¶</a></h3>
+<p>Set up the directory structure:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo mkdir /sites
+<span class="nv">$ </span>sudo chown myuser:admin /sites
+<span class="nv">$ </span><span class="nb">cd</span> /sites
+<span class="nv">$ </span>mkdir -p mydomain.com/<span class="o">{</span>code,public,logs,backup<span class="o">}</span>
+<span class="nv">$ </span><span class="nb">cd </span>mydomain.com
+<span class="nv">$ </span>sudo chown :www-data logs public
+<span class="nv">$ </span>sudo chmod g+w logs public
+</pre></div>
+</div>
+<p>Check out the site:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>git clone user@mygithost.com:/path/to/repository.git code/
+</pre></div>
+</div>
+<p>Link media into the public directory, if needed:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>public
+<span class="nv">$ </span>ln -s ../code/projectname/media
+<span class="nv">$ </span>sudo chown :www-data media
+<span class="nv">$ </span>sudo chmod g+w media
+</pre></div>
+</div>
+</div>
+<div class="section" id="virtualenvs">
+<h3>Virtualenvs<a class="headerlink" href="#virtualenvs" title="Permalink to this headline">¶</a></h3>
+<p>Setup virtualenvs and create a directory to hold them:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install build-essential python-dev libpq-dev
+<span class="nv">$ </span>sudo apt-get install python-setuptools
+<span class="nv">$ </span>sudo easy_install -U pip
+<span class="nv">$ </span>sudo pip install virtualenv
+<span class="nv">$ </span>sudo pip install virtualenvwrapper
+<span class="nv">$ </span>mkdir /sites/virtualenvs
+</pre></div>
+</div>
+<p>Edit .bashrc:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>emacs ~/.bashrc
+
+<span class="c"># Virtualenvwrapper</span>
+<span class="nb">export </span><span class="nv">WORKON_HOME</span><span class="o">=</span>/sites/.virtualenvs
+<span class="nb">source</span> /usr/local/bin/virtualenvwrapper.sh
+</pre></div>
+</div>
+<p>Then, back in the shell:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>. ~/.bashrc
+<span class="nv">$ </span>mkvirtualenv --no-site-packages projectname
+<span class="nv">$ </span>workon projectname
+<span class="nv">$ </span>pip install -r /sites/mydomain.com/code/requirements.txt
+<span class="nv">$ </span>deactivate
+</pre></div>
+</div>
+<p>Install the Ubuntu PIL package, and symlink it into the environment:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-imaging
+<span class="nv">$ </span>workon projectname
+<span class="nv">$ </span>cdsitepackages
+<span class="nv">$ </span>ln -s /usr/lib/python2.6/dist-packages/PIL
+<span class="nv">$ </span>ln -s /usr/lib/python2.6/dist-packages/PIL.pth
+</pre></div>
+</div>
+</div>
+<div class="section" id="utilities">
+<h3>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h3>
+<p>Install ntpdate to keep the server&#8217;s clock in sync:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo dpkg-reconfigure tzdata
+<span class="nv">$ </span>sudo apt-get install ntpdate
+<span class="nv">$ </span>sudo crontab -e
+
+30 23 * * * /usr/sbin/ntpdate ntp.ubuntu.com &gt; /dev/null
+</pre></div>
+</div>
+</div>
+<div class="section" id="nginx-configuration">
+<h3>Nginx Configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Add an nginx.conf to your source control:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>emacs /sites/mydomain.com/code/deploy/nginx.conf
+</pre></div>
+</div>
+<div class="highlight-nginx"><div class="highlight"><pre><span class="k">upstream</span> <span class="s">myapp</span> <span class="p">{</span>
+    <span class="kn">server</span> <span class="n">10.1.2.3</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+    <span class="kn">server</span> <span class="n">10.1.2.4</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+    <span class="kn">server</span> <span class="n">10.1.2.5</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+  <span class="kn">server_name</span> <span class="s">www.mydomain.com</span><span class="p">;</span>
+  <span class="kn">rewrite</span> <span class="s">^/(.*)</span> <span class="s">http://mydomain.com/</span><span class="nv">$1</span> <span class="s">permanent</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+  <span class="kn">server_name</span> <span class="s">mydomain.com</span><span class="p">;</span>
+
+  <span class="kn">access_log</span> <span class="s">/sites/mydomain.com/logs/access.log</span><span class="p">;</span>
+  <span class="kn">error_log</span> <span class="s">/sites/mydomain.com/logs/error.log</span><span class="p">;</span>
+
+  <span class="kn">location</span> <span class="s">/media</span> <span class="p">{</span>
+    <span class="kn">root</span> <span class="s">/sites/mydomain.com/public</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">uwsgi_pass</span> <span class="s">myapp</span><span class="p">;</span>
+        <span class="kn">include</span> <span class="s">uwsgi_params</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Symlink it into <em>/etc/nginx/sites-available/</em> and <em>sites-enabled/</em>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ln -s /sites/mydomain.com/code/deploy/nginx.conf /etc/nginx/sites-available/mydomain.com
+<span class="nv">$ </span>sudo ln -s /etc/nginx/sites-available/mydomain.com /etc/nginx/sites-enabled/mydomain.com
+<span class="nv">$ </span>sudo /etc/init.d/nginx restart
+</pre></div>
+</div>
+</div>
+<div class="section" id="supervisor-uwsgi">
+<h3>Supervisor &amp; uWSGI<a class="headerlink" href="#supervisor-uwsgi" title="Permalink to this headline">¶</a></h3>
+<p>Add a file to <em>/etc/supervisor/conf.d</em>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/supervisor/conf.d/mysite.conf
+</pre></div>
+</div>
+<div class="highlight-conf"><pre>[program:myapp]
+command=/usr/local/sbin/uwsgi
+  --home /sites/virtualenvs/myapp/
+  --module myapp.deploy.wsgi
+  --socket 10.1.2.3:10000
+  --pythonpath /sites/myapp.com/code/myapp
+  --processes 5
+  --master
+directory=/sites/myapp.com/code/myapp
+environment=DJANGO_SETTINGS_MODULE='myapp.settings'
+user=www-data
+autostart=true
+autorestart=true
+stdout_logfile=/sites/myapp.com/logs/uwsgi.log
+redirect_stderr=true
+stopsignal=QUIT</pre>
+</div>
+<p>The module specified in the &#8211;module option simply contains:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.core.handlers.wsgi</span> <span class="kn">import</span> <span class="n">WSGIHandler</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">WSGIHandler</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If you&#8217;re just using uWSGI on localhost, you can use something like <tt class="docutils literal"><span class="pre">--socket</span>
+<span class="pre">/sites/myapp.com/var/run/myapp.sock</span></tt> instead of an IP address to avoid the
+overhead of the full TCP stack.</p>
+<p>Reload the uWSGI config and update processes by running:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo supervisorctl update
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Manual Server Setup</a><ul>
+<li><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
+<li><a class="reference internal" href="#database-servers">Database Servers</a><ul>
+<li><a class="reference internal" href="#postfix">Postfix</a></li>
+<li><a class="reference internal" href="#postgres">Postgres</a></li>
+<li><a class="reference internal" href="#geodjango">GeoDjango</a></li>
+<li><a class="reference internal" href="#postgis-template">Postgis Template</a></li>
+<li><a class="reference internal" href="#nfs-sharing">NFS Sharing</a><ul>
+<li><a class="reference internal" href="#standby">Standby</a></li>
+<li><a class="reference internal" href="#primary">Primary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#replication">Replication</a><ul>
+<li><a class="reference internal" href="#id3">Primary</a></li>
+<li><a class="reference internal" href="#base-backup">Base Backup</a></li>
+<li><a class="reference internal" href="#id4">Standby</a></li>
+<li><a class="reference internal" href="#smoke-test">Smoke Test</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#web-servers">Web Servers</a><ul>
+<li><a class="reference internal" href="#postfix-and-geodjango">Postfix and GeoDjango</a></li>
+<li><a class="reference internal" href="#supervisord">Supervisord</a></li>
+<li><a class="reference internal" href="#uwsgi">uWSGI</a></li>
+<li><a class="reference internal" href="#nginx">Nginx</a></li>
+<li><a class="reference internal" href="#git">Git</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#site-setup">Site Setup</a><ul>
+<li><a class="reference internal" href="#basic-setup">Basic Setup</a></li>
+<li><a class="reference internal" href="#virtualenvs">Virtualenvs</a></li>
+<li><a class="reference internal" href="#utilities">Utilities</a></li>
+<li><a class="reference internal" href="#nginx-configuration">Nginx Configuration</a></li>
+<li><a class="reference internal" href="#supervisor-uwsgi">Supervisor &amp; uWSGI</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="newdevmachine.html"
+                        title="previous chapter">New Dev Machine Setup</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/serversetup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="newdevmachine.html" title="New Dev Machine Setup"
+             >previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Brandon Konkle.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>

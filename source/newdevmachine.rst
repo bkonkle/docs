@@ -1,7 +1,7 @@
-.. _newmachine:
+.. _newdevmachine:
 
-New Machine Setup
-=================
+New Dev Machine Setup
+=====================
 
 .. highlight:: sh
 
