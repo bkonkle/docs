@@ -1,0 +1,155 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Snippets &mdash; bkonkle v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bkonkle v1.0 documentation" href="index.html" />
+    <link rel="prev" title="Manual Server Setup" href="serversetup.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="serversetup.html" title="Manual Server Setup"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="snippets">
+<h1>Snippets<a class="headerlink" href="#snippets" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="git-hooks">
+<h2>Git Hooks<a class="headerlink" href="#git-hooks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pre-commit-build-add-sphinx-docs">
+<h3>Pre-Commit: Build &amp; Add Sphinx Docs<a class="headerlink" href="#pre-commit-build-add-sphinx-docs" title="Permalink to this headline">¶</a></h3>
+<p>The pre-commit hook used for this site:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/sh</span>
+
+<span class="c"># Build Sphinx docs</span>
+make html
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> <span class="o">=</span> 0 <span class="o">]</span>; <span class="k">then</span>
+    <span class="c"># If the build is successful, add everything except for the source</span>
+    <span class="c"># directory, which should be managed manually</span>
+    git add *
+    git add _sources
+    git add _static
+    git add doctrees
+<span class="k">else</span>
+<span class="k">    </span><span class="nb">exit</span> <span class="nv">$?</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="convert-git-svn-tags-to-actual-tags">
+<h2>Convert Git-Svn Tags to Actual Tags<a class="headerlink" href="#convert-git-svn-tags-to-actual-tags" title="Permalink to this headline">¶</a></h2>
+<p>Modify this bash script to suit your needs, and run it inside the repo:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/bin/bash</span>
+
+<span class="k">for </span>branch in <span class="sb">`</span>git branch -r<span class="sb">`</span>; <span class="k">do</span>
+<span class="k">    if</span> <span class="o">[</span> <span class="sb">`</span><span class="nb">echo</span> <span class="nv">$branch</span> | egrep <span class="s2">&quot;tags/.+$&quot;</span><span class="sb">`</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">        </span><span class="nv">version</span><span class="o">=</span><span class="sb">`</span>basename <span class="nv">$branch</span><span class="sb">`</span>
+        <span class="nv">subject</span><span class="o">=</span><span class="sb">`</span>git log -1 --pretty<span class="o">=</span>format:<span class="s2">&quot;%s&quot;</span> <span class="nv">$branch</span><span class="sb">`</span>
+        <span class="nb">export </span><span class="nv">GIT_COMMITTER_DATE</span><span class="o">=</span><span class="sb">`</span>git log -1 --pretty<span class="o">=</span>format:<span class="s2">&quot;%ci&quot;</span> <span class="nv">$branch</span><span class="sb">`</span>
+
+        <span class="nb">echo</span> <span class="s2">&quot;Tag $version [Y/n]?&quot;</span>
+        <span class="nb">read </span>yesno
+        <span class="k">if</span> <span class="o">[</span> -z <span class="nv">$yesno</span> <span class="o">]</span> <span class="o">||</span> <span class="o">[</span> <span class="nv">$yesno</span> <span class="o">=</span> <span class="s2">&quot;Y&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+<span class="k">            </span>git tag -f -m <span class="s2">&quot;$subject&quot;</span> <span class="s2">&quot;$version&quot;</span> <span class="s2">&quot;$branch&quot;</span>
+            git branch -d -r <span class="nv">$branch</span>
+        <span class="k">fi</span>
+<span class="k">    fi</span>
+<span class="k">done</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Snippets</a><ul>
+<li><a class="reference internal" href="#git-hooks">Git Hooks</a><ul>
+<li><a class="reference internal" href="#pre-commit-build-add-sphinx-docs">Pre-Commit: Build &amp; Add Sphinx Docs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#convert-git-svn-tags-to-actual-tags">Convert Git-Svn Tags to Actual Tags</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="serversetup.html"
+                        title="previous chapter">Manual Server Setup</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/snippets.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="serversetup.html" title="Manual Server Setup"
+             >previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Brandon Konkle.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+    </div>
+  </body>
+</html>
