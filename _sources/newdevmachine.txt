@@ -49,6 +49,12 @@ Install apps
 
 * `Adium <http://adium.im/>`_
 
+    * `AdiumIcon <adiumxtra://www.adiumxtras.com/download/7365>`_
+    
+    * `Pretty Simple Contact List <adiumxtra://www.adiumxtras.com/download/6515>`_
+    
+    * `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
+
 * `Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
 
 * `FireBug <http://getfirebug.com/>`_
