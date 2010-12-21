@@ -8,30 +8,30 @@ New Dev Machine Setup
 General config
 **************
 
-* Run Software Update
+Run Software Update
 
-* Start downloading `XCode <http://developer.apple.com/iphone>`_
+Start downloading `XCode <http://developer.apple.com/iphone>`_
 
-* Setup MobileMe syncing
+Setup MobileMe syncing
 
-* Clean up dock
+Clean up dock
 
-* Change default Finder "Arrange by" to "Name"
+Change default Finder "Arrange by" to "Name"
 
-* Increase the keyboard repeat rate
+Increase the keyboard repeat rate
 
 Install apps
 ************
 
-* `MagicPrefs <http://magicprefs.com/>`_
+`MagicPrefs <http://magicprefs.com/>`_
 
-* `Dropbox <https://www.dropbox.com/downloading?os=mac>`_
+`Dropbox <https://www.dropbox.com/downloading?os=mac>`_
 
-* Change Dropbox menubar color
+Change Dropbox menubar color
 
-* `1Password <http://agilewebsolutions.com/downloads/1Password3>`_
+`1Password <http://agilewebsolutions.com/downloads/1Password3>`_
 
-* `Chrome <http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac>`_ and make default browser
+`Chrome <http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac>`_ and make default browser
 
 * Set up Chrome sync
 
@@ -41,56 +41,70 @@ Install apps
 
 * `1Password extension <http://forum.agile.ws/index.php?/topic/56-setup-instructions/>`_
 
-* `Sparrow Mail <http://www.sparrowmailapp.com/>`_
+`Sparrow Mail <http://www.sparrowmailapp.com/>`_
 
-* `TextMate <http://macromates.com>`_
+`TextMate <http://macromates.com>`_
 
-* `Billings <http://www.marketcircle.com/billings/downloads/>`_
+`Billings <http://www.marketcircle.com/billings/downloads/>`_
 
-* `Adium <http://adium.im/>`_
+`Adium <http://adium.im/>`_
 
-    * `AdiumIcon <adiumxtra://www.adiumxtras.com/download/7365>`_
-    
-    * `Pretty Simple Contact List <adiumxtra://www.adiumxtras.com/download/6515>`_
-    
-    * `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
+* `AdiumIcon <adiumxtra://www.adiumxtras.com/download/7365>`_
 
-* `Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
+* `Pretty Simple Contact List <adiumxtra://www.adiumxtras.com/download/6515>`_
+
+* `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
+
+`Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
 
 * `FireBug <http://getfirebug.com/>`_
 
-* `Growl <http://growl.info>`_
+`Growl <http://growl.info>`_
 
-* `HTTP Client <http://ditchnet.org/httpclient/>`_
+`HTTP Client <http://ditchnet.org/httpclient/>`_
 
-* iLife
+iLife
 
-* iWork
+iWork
 
-* Xcode (hopefully it's done downloading by now)
+Xcode (hopefully it's done downloading by now)
 
 Configure development environment
 *********************************
 
-* Configure Terminal
+Configure Terminal
 
-* Install Homebrew::
+* Start with Pro as the base
+
+* Change font to Menlo Regular 11pt
+
+* Uncheck "Use bold fonts"
+
+* Check "Use bright colors"
+
+* On the *Shell* tab, select "Close if the shell exited cleanly"
+
+* On the *Keyboard* tab, check "Use option as meta key"
+
+* Save as default
+
+Install Homebrew::
 
 	$ ruby -e "$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)"
 
-* Install Git::
+Install Git::
 
 	$ brew install git
 
-* Install Hub::
+Install Hub::
 
 	$ brew install hub
 
-* Install Git-Flow::
+Install Git-Flow::
 
     $ brew install git-flow
 
-* Install dotfiles::
+Install dotfiles::
 
 	$ cd ~
 	$ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
@@ -99,33 +113,33 @@ Configure development environment
 	$ rake install
 	$ . ~/.bashrc
 
-* Install Python and Pip::
+Install Python and Pip::
 
 	$ brew install python pip
 
-* Clone TextMate themes::
+Clone TextMate themes::
 
 	$ git clone bkonkle/TextMate-Themes ~/Library/Application\ Support/TextMate/Themes
 
 Install TextMate plugins
 ************************
 
-* `MissingSidebar <http://github.com/jezdez/textmate-missingdrawer/>`_
+`MissingSidebar <http://github.com/jezdez/textmate-missingdrawer/>`_
 
-* `AckMate <http://github.com/protocool/AckMate>`_
+`AckMate <http://github.com/protocool/AckMate>`_
 
-* GetBundles::
+GetBundles::
 
 	$ mkdir -p ~/Library/Application\ Support/TextMate/Bundles
 	$ cd !$
 	$ svn co http://svn.textmate.org/trunk/Review/Bundles/GetBundles.tmbundle/
 	$ osascript -e 'tell app "TextMate" to reload bundles'
 
-* Install Python Django (by adamv)
+Install Python Django (by adamv)
 
-* Install Django Templates (by adamv)
+Install Django Templates (by adamv)
 
 Finishing up
 ************
 
-* Run Software Update again
+Run Software Update again
