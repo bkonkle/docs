@@ -55,6 +55,8 @@ Change Dropbox menubar color
 
 * `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
 
+* `Duckalicious <adiumxtra://www.adiumxtras.com/download/7200>`_
+
 `Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
 
 * `FireBug <http://getfirebug.com/>`_
