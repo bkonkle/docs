@@ -47,3 +47,14 @@ Modify this bash script to suit your needs, and run it inside the repo::
             fi
         fi
     done
+
+Install the PostgreSQL Gem on an x86_64 Intel Mac
+*************************************************
+
+Using `Homebrew <https://github.com/mxcl/homebrew>`_, install PostgreSQL::
+
+    $ brew install postgresql
+
+Then, run the gem install with ARCHFLAGS set::
+
+    $ sudo env ARCHFLAGS='-arch x86_64' gem install pg

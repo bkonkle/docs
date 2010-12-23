@@ -90,6 +90,17 @@ make html
 </pre></div>
 </div>
 </div>
+<div class="section" id="install-the-postgresql-gem-on-an-x86-64-intel-mac">
+<h2>Install the PostgreSQL Gem on an x86_64 Intel Mac<a class="headerlink" href="#install-the-postgresql-gem-on-an-x86-64-intel-mac" title="Permalink to this headline">¶</a></h2>
+<p>Using <a class="reference external" href="https://github.com/mxcl/homebrew">Homebrew</a>, install PostgreSQL:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install postgresql
+</pre></div>
+</div>
+<p>Then, run the gem install with ARCHFLAGS set:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo env <span class="nv">ARCHFLAGS</span><span class="o">=</span><span class="s1">&#39;-arch x86_64&#39;</span> gem install pg
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -106,6 +117,7 @@ make html
 </ul>
 </li>
 <li><a class="reference internal" href="#convert-git-svn-tags-to-actual-tags">Convert Git-Svn Tags to Actual Tags</a></li>
+<li><a class="reference internal" href="#install-the-postgresql-gem-on-an-x86-64-intel-mac">Install the PostgreSQL Gem on an x86_64 Intel Mac</a></li>
 </ul>
 </li>
 </ul>
