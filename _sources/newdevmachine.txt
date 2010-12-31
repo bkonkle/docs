@@ -27,7 +27,7 @@ Install apps
 
 `Dropbox <https://www.dropbox.com/downloading?os=mac>`_
 
-Change Dropbox menubar color
+* Change Dropbox menubar color
 
 `1Password <http://agilewebsolutions.com/downloads/1Password3>`_
 
@@ -56,6 +56,8 @@ Change Dropbox menubar color
 * `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
 
 * `Duckalicious <adiumxtra://www.adiumxtras.com/download/7200>`_
+
+`Echofon <http://www.echofon.com/twitter/mac/bin/Echofon.dmg>`_
 
 `Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
 
@@ -94,17 +96,9 @@ Install Homebrew::
 
 	$ ruby -e "$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)"
 
-Install Git::
+Install some packages::
 
-	$ brew install git
-
-Install Hub::
-
-	$ brew install hub
-
-Install Git-Flow::
-
-    $ brew install git-flow
+	$ brew install git hub git-flow bash-completion
 
 Install dotfiles::
 
@@ -115,9 +109,9 @@ Install dotfiles::
 	$ rake install
 	$ . ~/.bashrc
 
-Install Python and Pip::
+Install some dev requirements::
 
-	$ brew install python pip
+	$ brew install python pip postgresql nginx memcached
 
 Clone TextMate themes::
 
@@ -140,6 +134,8 @@ GetBundles::
 Install Python Django (by adamv)
 
 Install Django Templates (by adamv)
+
+Install reStructuredText
 
 Finishing up
 ************

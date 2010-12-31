@@ -62,7 +62,9 @@
 <h2>Install apps<a class="headerlink" href="#install-apps" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://magicprefs.com/">MagicPrefs</a></p>
 <p><a class="reference external" href="https://www.dropbox.com/downloading?os=mac">Dropbox</a></p>
-<p>Change Dropbox menubar color</p>
+<ul class="simple">
+<li>Change Dropbox menubar color</li>
+</ul>
 <p><a class="reference external" href="http://agilewebsolutions.com/downloads/1Password3">1Password</a></p>
 <p><a class="reference external" href="http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac">Chrome</a> and make default browser</p>
 <ul class="simple">
@@ -81,6 +83,7 @@
 <li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/6938">Pretty Simple Message</a></li>
 <li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/7200">Duckalicious</a></li>
 </ul>
+<p><a class="reference external" href="http://www.echofon.com/twitter/mac/bin/Echofon.dmg">Echofon</a></p>
 <p><a class="reference external" href="http://www.mozilla.com/en-US/firefox/firefox.html">Firefox</a></p>
 <ul class="simple">
 <li><a class="reference external" href="http://getfirebug.com/">FireBug</a></li>
@@ -107,16 +110,8 @@
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>ruby -e <span class="s2">&quot;$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)&quot;</span>
 </pre></div>
 </div>
-<p>Install Git:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git
-</pre></div>
-</div>
-<p>Install Hub:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install hub
-</pre></div>
-</div>
-<p>Install Git-Flow:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git-flow
+<p>Install some packages:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git hub git-flow bash-completion
 </pre></div>
 </div>
 <p>Install dotfiles:</p>
@@ -128,8 +123,8 @@
 <span class="nv">$ </span>. ~/.bashrc
 </pre></div>
 </div>
-<p>Install Python and Pip:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python pip
+<p>Install some dev requirements:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python pip postgresql nginx memcached
 </pre></div>
 </div>
 <p>Clone TextMate themes:</p>
@@ -149,6 +144,7 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
 </div>
 <p>Install Python Django (by adamv)</p>
 <p>Install Django Templates (by adamv)</p>
+<p>Install reStructuredText</p>
 </div>
 <div class="section" id="finishing-up">
 <h2>Finishing up<a class="headerlink" href="#finishing-up" title="Permalink to this headline">¶</a></h2>
