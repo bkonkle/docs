@@ -132,6 +132,24 @@
 </pre></div>
 </div>
 </div>
+<div class="section" id="geodjango">
+<h2>GeoDjango<a class="headerlink" href="#geodjango" title="Permalink to this headline">¶</a></h2>
+<p>If you&#8217;re using GeoDjango, install the requirements with Homebrew:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install geos proj postgis gdal
+</pre></div>
+</div>
+<p>Set up a template for new postgis databases:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">POSTGIS_SQL_PATH</span><span class="o">=</span><span class="sb">`</span>pg_config --sharedir<span class="sb">`</span>/contrib/postgis-1.5
+createdb -E UTF8 template_postgis
+createlang -d template_postgis plpgsql
+psql -d postgres -c <span class="s2">&quot;UPDATE pg_database SET datistemplate=&#39;true&#39; WHERE datname=&#39;template_postgis&#39;;&quot;</span>
+psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/postgis.sql <span class="c"># Loading the PostGIS SQL routines</span>
+psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/spatial_ref_sys.sql
+psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON geometry_columns TO PUBLIC;&quot;</span> <span class="c"># Enabling users to alter spatial tables.</span>
+psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON spatial_ref_sys TO PUBLIC;&quot;</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="install-textmate-plugins">
 <h2>Install TextMate plugins<a class="headerlink" href="#install-textmate-plugins" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="http://github.com/jezdez/textmate-missingdrawer/">MissingSidebar</a></p>
@@ -164,6 +182,7 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
 <li><a class="reference internal" href="#general-config">General config</a></li>
 <li><a class="reference internal" href="#install-apps">Install apps</a></li>
 <li><a class="reference internal" href="#configure-development-environment">Configure development environment</a></li>
+<li><a class="reference internal" href="#geodjango">GeoDjango</a></li>
 <li><a class="reference internal" href="#install-textmate-plugins">Install TextMate plugins</a></li>
 <li><a class="reference internal" href="#finishing-up">Finishing up</a></li>
 </ul>

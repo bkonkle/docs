@@ -117,6 +117,24 @@ Clone TextMate themes::
 
 	$ git clone bkonkle/TextMate-Themes ~/Library/Application\ Support/TextMate/Themes
 
+GeoDjango
+*********
+
+If you're using GeoDjango, install the requirements with Homebrew::
+
+    $ brew install geos proj postgis gdal
+
+Set up a template for new postgis databases::
+
+    POSTGIS_SQL_PATH=`pg_config --sharedir`/contrib/postgis-1.5
+    createdb -E UTF8 template_postgis
+    createlang -d template_postgis plpgsql
+    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
+    psql -d template_postgis -f $POSTGIS_SQL_PATH/postgis.sql # Loading the PostGIS SQL routines
+    psql -d template_postgis -f $POSTGIS_SQL_PATH/spatial_ref_sys.sql
+    psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;" # Enabling users to alter spatial tables.
+    psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+
 Install TextMate plugins
 ************************
 
