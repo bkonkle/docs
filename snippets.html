@@ -101,6 +101,50 @@ make html
 </pre></div>
 </div>
 </div>
+<div class="section" id="installing-mediatomb-on-ubuntu-10-10-with-js-support">
+<h2>Installing Mediatomb on Ubuntu 10.10 with JS Support<a class="headerlink" href="#installing-mediatomb-on-ubuntu-10-10-with-js-support" title="Permalink to this headline">¶</a></h2>
+<p>First, download and build SpiderMonkey:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>wget http://ftp.mozilla.org/pub/mozilla.org/js/js-1.8.0-rc1.tar.gz
+<span class="nv">$ </span>tar -xzf js-1.8.0-rc1.tar.gz
+<span class="nv">$ </span><span class="nb">cd </span>js/src/
+<span class="nv">$ </span>make <span class="nv">BUILD_OPT</span><span class="o">=</span>1 -f Makefile.ref
+</pre></div>
+</div>
+<p>Then create a quick Makefile:</p>
+<div class="highlight-sh"><div class="highlight"><pre>BLD :<span class="o">=</span> Linux_All_OPT.OBJ
+PREFIX :<span class="o">=</span> /usr
+
+install:
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/libjs.so <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/lib
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/js <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/jscpucfg <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/jskwgen <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    mkdir -p <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp *.h <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp *.tbl <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/*.h <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+</pre></div>
+</div>
+<p>Install with checkinstall so that it can be removed later if needed:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo checkinstall --pkgname<span class="o">=</span>libjs --pkgversion<span class="o">=</span>1.8.0-rc1
+</pre></div>
+</div>
+<p>Now, grab the mediatomb source and edit the debian rules to enable libjs:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get build-dep mediatomb
+<span class="nv">$ </span>apt-get <span class="nb">source </span>mediatomb
+<span class="nv">$ </span><span class="nb">cd </span>mediatomb*/
+<span class="nv">$ </span>emacs debian/rules
+
+<span class="c"># Change --disable-libjs to --enable-libjs in MEDIATOMB_CONFIG_OPTIONS</span>
+
+<span class="nv">$ </span>dpkg-buildpackage -rfakeroot -us -uc
+<span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="nv">$ </span>sudo dpkg -i mediatomb*.deb
+</pre></div>
+</div>
+<p>Now you can create custom virtual containers using JavaScript, to keep your
+content much more organized.</p>
+</div>
 </div>
 
 
@@ -118,6 +162,7 @@ make html
 </li>
 <li><a class="reference internal" href="#convert-git-svn-tags-to-actual-tags">Convert Git-Svn Tags to Actual Tags</a></li>
 <li><a class="reference internal" href="#install-the-postgresql-gem-on-an-x86-64-intel-mac">Install the PostgreSQL Gem on an x86_64 Intel Mac</a></li>
+<li><a class="reference internal" href="#installing-mediatomb-on-ubuntu-10-10-with-js-support">Installing Mediatomb on Ubuntu 10.10 with JS Support</a></li>
 </ul>
 </li>
 </ul>

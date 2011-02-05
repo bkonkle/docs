@@ -58,3 +58,48 @@ Using `Homebrew <https://github.com/mxcl/homebrew>`_, install PostgreSQL::
 Then, run the gem install with ARCHFLAGS set::
 
     $ sudo env ARCHFLAGS='-arch x86_64' gem install pg
+
+Installing Mediatomb on Ubuntu 10.10 with JS Support
+****************************************************
+
+First, download and build SpiderMonkey::
+
+    $ wget http://ftp.mozilla.org/pub/mozilla.org/js/js-1.8.0-rc1.tar.gz
+    $ tar -xzf js-1.8.0-rc1.tar.gz
+    $ cd js/src/
+    $ make BUILD_OPT=1 -f Makefile.ref
+
+Then create a quick Makefile::
+
+    BLD := Linux_All_OPT.OBJ
+    PREFIX := /usr
+
+    install:
+    	cp ${BLD}/libjs.so ${PREFIX}/lib
+    	cp ${BLD}/js ${PREFIX}/bin
+    	cp ${BLD}/jscpucfg ${PREFIX}/bin
+    	cp ${BLD}/jskwgen ${PREFIX}/bin
+    	mkdir -p ${PREFIX}/include/js
+    	cp *.h ${PREFIX}/include/js
+    	cp *.tbl ${PREFIX}/include/js
+    	cp ${BLD}/*.h ${PREFIX}/include/js
+
+Install with checkinstall so that it can be removed later if needed::
+
+    $ sudo checkinstall --pkgname=libjs --pkgversion=1.8.0-rc1
+
+Now, grab the mediatomb source and edit the debian rules to enable libjs::
+
+    $ sudo apt-get build-dep mediatomb
+    $ apt-get source mediatomb
+    $ cd mediatomb*/
+    $ emacs debian/rules
+    
+    # Change --disable-libjs to --enable-libjs in MEDIATOMB_CONFIG_OPTIONS
+    
+    $ dpkg-buildpackage -rfakeroot -us -uc
+    $ cd ..
+    $ sudo dpkg -i mediatomb*.deb
+
+Now you can create custom virtual containers using JavaScript, to keep your 
+content much more organized.
