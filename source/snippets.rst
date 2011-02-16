@@ -100,6 +100,11 @@ Now, grab the mediatomb source and edit the debian rules to enable libjs::
     $ dpkg-buildpackage -rfakeroot -us -uc
     $ cd ..
     $ sudo dpkg -i mediatomb*.deb
+    
+    $ echo "libjs hold" | sudo dpkg --set-selections
+    $ echo "mediatomb-common hold" | sudo dpkg --set-selections
+    $ echo "mediatomb-daemon hold" | sudo dpkg --set-selections
+    $ echo "mediatomb hold" | sudo dpkg --set-selections
 
 Now you can create custom virtual containers using JavaScript, to keep your 
 content much more organized.

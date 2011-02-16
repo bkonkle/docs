@@ -140,6 +140,11 @@ install:
 <span class="nv">$ </span>dpkg-buildpackage -rfakeroot -us -uc
 <span class="nv">$ </span><span class="nb">cd</span> ..
 <span class="nv">$ </span>sudo dpkg -i mediatomb*.deb
+
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;libjs hold&quot;</span> | sudo dpkg --set-selections
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;mediatomb-common hold&quot;</span> | sudo dpkg --set-selections
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;mediatomb-daemon hold&quot;</span> | sudo dpkg --set-selections
+<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;mediatomb hold&quot;</span> | sudo dpkg --set-selections
 </pre></div>
 </div>
 <p>Now you can create custom virtual containers using JavaScript, to keep your
