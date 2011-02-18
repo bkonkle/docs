@@ -59,17 +59,6 @@ Then, run the gem install with ARCHFLAGS set::
 
     $ sudo env ARCHFLAGS='-arch x86_64' gem install pg
 
-Snow Leopard NFS Automount
-**************************
-
-Disk Utility --> File --> NFS Mounts...
-
-**Remote NFS URL**: nfs://[server]/[path]
-
-**Mount location**: [path to local mount folder]
-
-**Advanced Mount Parameters**: -i,-s,-w=32768,-r=32768
-
 SSH Port Forwarding
 *******************
 

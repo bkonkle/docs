@@ -117,6 +117,18 @@ Restart and export::
 
     $ sudo exportfs -a
 
+Automounting NFS in Snow Leopard
+********************************
+
+Disk Utility --> File --> NFS Mounts...
+
+**Remote NFS URL**: nfs://[server]/[path]
+
+**Mount location**: [path to local mount folder]
+
+**Advanced Mount Parameters**: -i,-s,-w=32768,-r=32768
+
+
 Installing Avahi for Zeroconf (Bonjour) Support
 -----------------------------------------------
 

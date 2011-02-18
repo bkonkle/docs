@@ -147,6 +147,13 @@ permissions so that the NFS client can access it.</p>
 <span class="nv">$ </span>sudo exportfs -a
 </pre></div>
 </div>
+<div class="section" id="automounting-nfs-in-snow-leopard">
+<h3>Automounting NFS in Snow Leopard<a class="headerlink" href="#automounting-nfs-in-snow-leopard" title="Permalink to this headline">¶</a></h3>
+<p>Disk Utility &#8211;&gt; File &#8211;&gt; NFS Mounts...</p>
+<p><strong>Remote NFS URL</strong>: <a class="reference external" href="nfs://[server]/[path">nfs://[server]/[path</a>]</p>
+<p><strong>Mount location</strong>: [path to local mount folder]</p>
+<p><strong>Advanced Mount Parameters</strong>: -i,-s,-w=32768,-r=32768</p>
+</div>
 </div>
 <div class="section" id="installing-avahi-for-zeroconf-bonjour-support">
 <h2>Installing Avahi for Zeroconf (Bonjour) Support<a class="headerlink" href="#installing-avahi-for-zeroconf-bonjour-support" title="Permalink to this headline">¶</a></h2>
@@ -217,7 +224,10 @@ content much more organized.</p>
   <ul>
 <li><a class="reference internal" href="#">Home Server Setup</a><ul>
 <li><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
-<li><a class="reference internal" href="#nfs-sharing">NFS Sharing</a></li>
+<li><a class="reference internal" href="#nfs-sharing">NFS Sharing</a><ul>
+<li><a class="reference internal" href="#automounting-nfs-in-snow-leopard">Automounting NFS in Snow Leopard</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#installing-avahi-for-zeroconf-bonjour-support">Installing Avahi for Zeroconf (Bonjour) Support</a></li>
 <li><a class="reference internal" href="#installing-mediatomb-with-js-support">Installing Mediatomb with JS Support</a></li>
 </ul>
@@ -269,7 +279,7 @@ content much more organized.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
     </div>
   </body>
 </html>
