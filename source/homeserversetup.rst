@@ -6,7 +6,7 @@ Home Server Setup
 .. highlight:: sh
 
 This is how I set up my home server, which I use for hosting streaming video
-for my PS3, file storage, backups, and more.
+for my PS3, file storage, backups, and more.  I use NFS for file sharing because it gives me the highest speed and the least amount of configuration, compared to AFP or Samba.
 
 Initial Setup
 -------------
