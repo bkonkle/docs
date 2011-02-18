@@ -637,22 +637,23 @@ the temp files are kept in the right place. Until then, you&#8217;ll need to cre
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/supervisor/conf.d/mysite.conf
 </pre></div>
 </div>
-<div class="highlight-cfg"><pre>[program:myapp]
-command=/usr/local/sbin/uwsgi
-  --home /sites/virtualenvs/myapp/
-  --module myapp.deploy.wsgi
-  --socket 10.1.2.3:10000
-  --pythonpath /sites/myapp.com/code/myapp
-  --processes 5
-  --master
-directory=/sites/myapp.com/code/myapp
-environment=DJANGO_SETTINGS_MODULE='myapp.settings'
-user=www-data
-autostart=true
-autorestart=true
-stdout_logfile=/sites/myapp.com/logs/uwsgi.log
-redirect_stderr=true
-stopsignal=QUIT</pre>
+<div class="highlight-cfg"><div class="highlight"><pre><span class="k">[program:myapp]</span>
+<span class="na">command</span><span class="o">=</span><span class="s">/usr/local/sbin/uwsgi</span>
+<span class="s">  --home /sites/virtualenvs/myapp/</span>
+<span class="s">  --module myapp.deploy.wsgi</span>
+<span class="s">  --socket 10.1.2.3:10000</span>
+<span class="s">  --pythonpath /sites/myapp.com/code/myapp</span>
+<span class="s">  --processes 5</span>
+<span class="s">  --master</span>
+<span class="na">directory</span><span class="o">=</span><span class="s">/sites/myapp.com/code/myapp</span>
+<span class="na">environment</span><span class="o">=</span><span class="s">DJANGO_SETTINGS_MODULE=&#39;myapp.settings&#39;</span>
+<span class="na">user</span><span class="o">=</span><span class="s">www-data</span>
+<span class="na">autostart</span><span class="o">=</span><span class="s">true</span>
+<span class="na">autorestart</span><span class="o">=</span><span class="s">true</span>
+<span class="na">stdout_logfile</span><span class="o">=</span><span class="s">/sites/myapp.com/logs/uwsgi.log</span>
+<span class="na">redirect_stderr</span><span class="o">=</span><span class="s">true</span>
+<span class="na">stopsignal</span><span class="o">=</span><span class="s">QUIT</span>
+</pre></div>
 </div>
 <p>The module specified in the &#8211;module option simply contains:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.core.handlers.wsgi</span> <span class="kn">import</span> <span class="n">WSGIHandler</span>
@@ -765,7 +766,7 @@ overhead of the full TCP stack.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
     </div>
   </body>
 </html>

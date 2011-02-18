@@ -150,6 +150,30 @@ install:
 <p>Now you can create custom virtual containers using JavaScript, to keep your
 content much more organized.</p>
 </div>
+<div class="section" id="snow-leopard-nfs-automount">
+<h2>Snow Leopard NFS Automount<a class="headerlink" href="#snow-leopard-nfs-automount" title="Permalink to this headline">¶</a></h2>
+<p>Disk Utility &#8211;&gt; File &#8211;&gt; NFS Mounts...</p>
+<p><strong>Remote NFS URL</strong>: <a class="reference external" href="nfs://[server]/[path">nfs://[server]/[path</a>]</p>
+<p><strong>Mount location</strong>: [path to local mount folder]</p>
+<p><strong>Advanced Mount Parameters</strong>: -i,-s,-w=32768,-r=32768</p>
+</div>
+<div class="section" id="ssh-port-forwarding">
+<h2>SSH Port Forwarding<a class="headerlink" href="#ssh-port-forwarding" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="standard">
+<h3>Standard<a class="headerlink" href="#standard" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># ssh -N -L &lt;LOCAL PORT&gt;:&lt;HOST&gt;:&lt;REMOTE PORT&gt; &lt;REMOTE HOST&gt;</span>
+<span class="nv">$ </span>ssh -N -L 8000:web03ilo:80 web03
+</pre></div>
+</div>
+</div>
+<div class="section" id="reverse">
+<h3>Reverse<a class="headerlink" href="#reverse" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-sh"><div class="highlight"><pre><span class="c"># ssh -N -R &lt;REMOTE PORT&gt;:&lt;HOST&gt;:&lt;LOCAL PORT&gt; &lt;REMOTE HOST&gt;</span>
+<span class="nv">$ </span>ssh -N -R 2022:localhost:22 user@server
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -168,6 +192,12 @@ content much more organized.</p>
 <li><a class="reference internal" href="#convert-git-svn-tags-to-actual-tags">Convert Git-Svn Tags to Actual Tags</a></li>
 <li><a class="reference internal" href="#install-the-postgresql-gem-on-an-x86-64-intel-mac">Install the PostgreSQL Gem on an x86_64 Intel Mac</a></li>
 <li><a class="reference internal" href="#installing-mediatomb-on-ubuntu-10-10-with-js-support">Installing Mediatomb on Ubuntu 10.10 with JS Support</a></li>
+<li><a class="reference internal" href="#snow-leopard-nfs-automount">Snow Leopard NFS Automount</a></li>
+<li><a class="reference internal" href="#ssh-port-forwarding">SSH Port Forwarding</a><ul>
+<li><a class="reference internal" href="#standard">Standard</a></li>
+<li><a class="reference internal" href="#reverse">Reverse</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -211,7 +241,7 @@ content much more organized.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.5.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
     </div>
   </body>
 </html>

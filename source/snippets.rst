@@ -108,3 +108,33 @@ Now, grab the mediatomb source and edit the debian rules to enable libjs::
 
 Now you can create custom virtual containers using JavaScript, to keep your 
 content much more organized.
+
+Snow Leopard NFS Automount
+**************************
+
+Disk Utility --> File --> NFS Mounts...
+
+**Remote NFS URL**: nfs://[server]/[path]
+
+**Mount location**: [path to local mount folder]
+
+**Advanced Mount Parameters**: -i,-s,-w=32768,-r=32768
+
+SSH Port Forwarding
+*******************
+
+Standard
+--------
+
+::
+
+    # ssh -N -L <LOCAL PORT>:<HOST>:<REMOTE PORT> <REMOTE HOST>
+    $ ssh -N -L 8000:web03ilo:80 web03
+
+Reverse
+-------
+
+::
+
+    # ssh -N -R <REMOTE PORT>:<HOST>:<LOCAL PORT> <REMOTE HOST>
+    $ ssh -N -R 2022:localhost:22 user@server
