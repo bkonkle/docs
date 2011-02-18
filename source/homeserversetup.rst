@@ -124,7 +124,7 @@ Disk Utility --> File --> NFS Mounts...
 
 **Remote NFS URL**: nfs://[server]/[path]
 
-**Mount location**: [path to local mount folder]
+**Mount location**: /Network/[your desired folder name]
 
 **Advanced Mount Parameters**: -i,-s,-w=32768,-r=32768
 
