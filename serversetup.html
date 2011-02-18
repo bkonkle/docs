@@ -107,6 +107,19 @@ and invoke sudo with no problems.  You can now lock down the root account:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install bash-completion python-software-properties
 </pre></div>
 </div>
+<p>Also, it&#8217;s a good idea to disable password auth for SSH:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/ssh/sshd_config
+
+<span class="c"># Make sure the following are set to no</span>
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+UsePAM no
+</pre></div>
+</div>
+<p>Reload the SSH config:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/ssh reload
+</pre></div>
+</div>
 </div>
 <div class="section" id="database-servers">
 <h2>Database Servers<a class="headerlink" href="#database-servers" title="Permalink to this headline">¶</a></h2>

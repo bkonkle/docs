@@ -1,0 +1,275 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Home Server Setup &mdash; bkonkle v1.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="bkonkle v1.0 documentation" href="index.html" />
+    <link rel="next" title="New Dev Machine Setup" href="newdevmachine.html" />
+    <link rel="prev" title="Welcome to Brandon Konkle’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="newdevmachine.html" title="New Dev Machine Setup"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Brandon Konkle’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="home-server-setup">
+<span id="homeserversetup"></span><h1>Home Server Setup<a class="headerlink" href="#home-server-setup" title="Permalink to this headline">¶</a></h1>
+<p>This is how I set up my home server, which I use for hosting streaming video
+for my PS3, file storage, backups, and more.</p>
+<div class="section" id="initial-setup">
+<h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Permalink to this headline">¶</a></h2>
+<p>Install Ubuntu 10.10 on your machine using a CD or USB key.  Once the install
+is complete, log in and install emacs.  Configure it as the default:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install emacs23-nox
+<span class="nv">$ </span>sudo update-alternatives --config editor
+</pre></div>
+</div>
+<p>Set up sudo access:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo visudo
+</pre></div>
+</div>
+<p>Under this line:</p>
+<div class="highlight-none"><div class="highlight"><pre>Defaults        env_reset
+</pre></div>
+</div>
+<p>Add the following line to preserve editor environment settings:</p>
+<div class="highlight-none"><div class="highlight"><pre>Defaults        env_keep += &quot;EDITOR VISUAL&quot;
+</pre></div>
+</div>
+<p>Then, change this line:</p>
+<div class="highlight-none"><div class="highlight"><pre>%admin  ALL=(ALL) ALL
+</pre></div>
+</div>
+<p>To this:</p>
+<div class="highlight-none"><div class="highlight"><pre>%admin  ALL=(ALL) NOPASSWD:ALL
+</pre></div>
+</div>
+<p>Upgrade anything that&#8217;s out of date:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get update
+<span class="nv">$ </span>sudo apt-get dist-upgrade
+</pre></div>
+</div>
+<p>Install various packages that are often useful:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install bash-completion python-software-properties build-essential checkinstall
+</pre></div>
+</div>
+<p>Add your public key to authorized_keys:</p>
+<div class="highlight-sh"><pre>$ su - myuser
+$ mkdir .ssh
+$ cd !$
+$ wget http://mydomain.com/path/to/my/pubkey/id_rsa.pub
+$ mv id_rsa.pub authorized_keys</pre>
+</div>
+<p>Once you&#8217;ve confirmed pubkey authentication is working, disable SSH password
+authentication:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/ssh/sshd_config
+
+<span class="c"># Make sure the following are set to no</span>
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+UsePAM no
+</pre></div>
+</div>
+<p>Reload the SSH config:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/ssh reload
+</pre></div>
+</div>
+</div>
+<div class="section" id="nfs-sharing">
+<h2>NFS Sharing<a class="headerlink" href="#nfs-sharing" title="Permalink to this headline">¶</a></h2>
+<p>Find out your user and group IDs. You&#8217;ll use them in the next
+step:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>id -u myuser
+1000
+
+<span class="nv">$ </span>id -g myuser
+1000
+</pre></div>
+</div>
+<p>Install NFS:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install nfs-kernel-server nfs-common portmap
+
+<span class="nv">$ </span>sudo dpkg-reconfigure portmap
+
+<span class="c"># Select &#39;no&#39;</span>
+
+<span class="nv">$ </span>sudo restart portmap
+
+<span class="nv">$ </span>sudo emacs /etc/exports
+</pre></div>
+</div>
+<p>Add a line like this:</p>
+<div class="highlight-none"><div class="highlight"><pre>/path/for/storage    10.0.1.0/24(rw,insecure,async,no_subtree_check,all_squash,anonuid=1000,anongid=1000)
+/path/for/backups    10.0.1.0/24(rw,insecure,async,no_subtree_check,all_squash,anonuid=1000,anongid=1000)
+</pre></div>
+</div>
+<p>10.0.1.0/24 will allow IPs in the range of 10.0.1.0 - 10.0.1.255 to connect.
+Make sure to create the backups and storage directories and give it the correct
+permissions so that the NFS client can access it.</p>
+<p>Restart and export:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/nfs-kernel-server restart
+
+<span class="nv">$ </span>sudo exportfs -a
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-avahi-for-zeroconf-bonjour-support">
+<h2>Installing Avahi for Zeroconf (Bonjour) Support<a class="headerlink" href="#installing-avahi-for-zeroconf-bonjour-support" title="Permalink to this headline">¶</a></h2>
+<p>This is probably unnecessary, but I like being able to SSH to myhost.local:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install avahi-daemon
+</pre></div>
+</div>
+</div>
+<div class="section" id="installing-mediatomb-with-js-support">
+<h2>Installing Mediatomb with JS Support<a class="headerlink" href="#installing-mediatomb-with-js-support" title="Permalink to this headline">¶</a></h2>
+<p>First, download and build SpiderMonkey:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>wget http://ftp.mozilla.org/pub/mozilla.org/js/js-1.8.0-rc1.tar.gz
+<span class="nv">$ </span>tar -xzf js-1.8.0-rc1.tar.gz
+<span class="nv">$ </span><span class="nb">cd </span>js/src/
+<span class="nv">$ </span>make <span class="nv">BUILD_OPT</span><span class="o">=</span>1 -f Makefile.ref
+</pre></div>
+</div>
+<p>Then create a quick Makefile:</p>
+<div class="highlight-sh"><div class="highlight"><pre>BLD :<span class="o">=</span> Linux_All_OPT.OBJ
+PREFIX :<span class="o">=</span> /usr
+
+install:
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/libjs.so <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/lib
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/js <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/jscpucfg <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/jskwgen <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/bin
+    mkdir -p <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp *.h <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp *.tbl <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+    cp <span class="k">${</span><span class="nv">BLD</span><span class="k">}</span>/*.h <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>/include/js
+</pre></div>
+</div>
+<p>Install with checkinstall so that it can be removed later if needed:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo checkinstall --pkgname<span class="o">=</span>libjs --pkgversion<span class="o">=</span>1.8.0-rc1
+</pre></div>
+</div>
+<p>Now, grab the mediatomb source and edit the debian rules to enable libjs:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install libjs-prototype
+<span class="nv">$ </span>sudo apt-get build-dep mediatomb
+<span class="nv">$ </span>apt-get <span class="nb">source </span>mediatomb
+<span class="nv">$ </span><span class="nb">cd </span>mediatomb*/
+<span class="nv">$ </span>emacs debian/rules
+
+<span class="c"># Change --disable-libjs to --enable-libjs in MEDIATOMB_CONFIG_OPTIONS</span>
+
+<span class="nv">$ </span>dpkg-buildpackage -rfakeroot -us -uc
+<span class="nv">$ </span><span class="nb">cd</span> ..
+<span class="nv">$ </span>sudo dpkg -i mediatomb*.deb
+
+<span class="nb">echo</span> <span class="s2">&quot;libjs hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;mediatomb-common hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;mediatomb-daemon hold&quot;</span> | sudo dpkg --set-selections
+<span class="nb">echo</span> <span class="s2">&quot;mediatomb hold&quot;</span> | sudo dpkg --set-selections
+</pre></div>
+</div>
+<p>Now you can create custom virtual containers using JavaScript, to keep your
+content much more organized.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Home Server Setup</a><ul>
+<li><a class="reference internal" href="#initial-setup">Initial Setup</a></li>
+<li><a class="reference internal" href="#nfs-sharing">NFS Sharing</a></li>
+<li><a class="reference internal" href="#installing-avahi-for-zeroconf-bonjour-support">Installing Avahi for Zeroconf (Bonjour) Support</a></li>
+<li><a class="reference internal" href="#installing-mediatomb-with-js-support">Installing Mediatomb with JS Support</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Brandon Konkle&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="newdevmachine.html"
+                        title="next chapter">New Dev Machine Setup</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/homeserversetup.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="newdevmachine.html" title="New Dev Machine Setup"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Brandon Konkle’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Brandon Konkle.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.6.
+    </div>
+  </body>
+</html>

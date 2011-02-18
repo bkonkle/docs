@@ -74,6 +74,19 @@ Install various packages that are often useful::
 
 	$ sudo apt-get install bash-completion python-software-properties
 
+Also, it's a good idea to disable password auth for SSH::
+
+    $ sudo emacs /etc/ssh/sshd_config
+
+    # Make sure the following are set to no
+    ChallengeResponseAuthentication no
+    PasswordAuthentication no
+    UsePAM no
+
+Reload the SSH config::
+
+    $ sudo /etc/init.d/ssh reload
+
 Database Servers
 ----------------
 
