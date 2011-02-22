@@ -132,7 +132,8 @@ Disk Utility --> File --> NFS Mounts...
 Installing Avahi for Zeroconf (Bonjour) Support
 -----------------------------------------------
 
-This is probably unnecessary, but I like being able to SSH to myhost.local::
+This broadcasts the server's local IP and sevices to other machines on the
+local network::
 
     $ sudo apt-get install avahi-daemon
 
@@ -190,4 +191,40 @@ content much more organized.
 Time Machine Backups
 --------------------
 
-Coming soon...
+This method allows you to point the Snow Leopard version of Time Machine to
+your new home server. First, use the hdiutil command to create a sparse bundle
+to use for the backups::
+
+    $ hdiutil create -size 500G -fs HFS+J -volname 'Backup of MyHostname' -type SPARSEBUNDLE MyHostname.sparsebundle
+
+Then, change to the directory you just created::
+
+    $ cd MyHostname.sparsebundle/
+
+Grab your desktop machine's Hardware UUID from System Profiler (inside
+/Applications/Utilities).  It should be in the "Hardware Overview" section that
+appears when you first launch the utility.
+
+Create a .plist in the sparsebundle directory to store your UUID in::
+
+    $ emacs com.apple.TimeMachine.MachineID.plist
+
+.. code-block:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+        <key>com.apple.backupd.HostUUID</key>
+        <string>YOURUUIDHERE</string>
+    </dict>
+    </plist>
+
+Copy your disk image to the Linux machine using one of the NFS mounts you
+created earlier.  Now, run the following command in the terminal to enable
+"unsupported network volumes" in Time Machine::
+
+    $ defaults write com.apple.systempreferences TMShowUnsupportedNetworkVolumes 1
+
+With that done, you should now be able to open your Time Machine preferences
+and select your network share as a backup disk.
