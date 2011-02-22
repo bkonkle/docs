@@ -193,7 +193,7 @@ Time Machine Backups
 
 This method allows you to point the Snow Leopard version of Time Machine to
 your new home server. First, use the hdiutil command to create a sparse bundle
-to use for the backups::
+to use for the backups, adjusting the size as necessary::
 
     $ hdiutil create -size 500G -fs HFS+J -volname 'Backup of MyHostname' -type SPARSEBUNDLE MyHostname.sparsebundle
 
@@ -221,8 +221,12 @@ Create a .plist in the sparsebundle directory to store your UUID in::
     </plist>
 
 Copy your disk image to the Linux machine using one of the NFS mounts you
-created earlier.  Now, run the following command in the terminal to enable
-"unsupported network volumes" in Time Machine::
+created earlier::
+
+    $ cp -pfr MyHostname.sparsebundle /Network/Backups/
+
+Now, run the following command in the terminal to enable "unsupported network
+volumes" in Time Machine::
 
     $ defaults write com.apple.systempreferences TMShowUnsupportedNetworkVolumes 1
 
