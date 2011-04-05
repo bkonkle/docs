@@ -111,7 +111,9 @@ Install dotfiles::
 
 Install some dev requirements::
 
-	$ brew install python pip postgresql nginx memcached
+	$ brew install python postgresql nginx memcached
+	
+	$ easy_install pip
 
 Clone TextMate themes::
 
