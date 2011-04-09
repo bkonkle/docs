@@ -128,7 +128,7 @@ Disk Utility --> File --> NFS Mounts...
 
 **Mount location**: /Network/[your desired folder name]
 
-**Advanced Mount Parameters**: -i,-s,-w=32768,-r=32768
+**Advanced Mount Parameters**: intr,soft,rdirplus,wsize=32768,rsize=32768
 
 
 Installing Avahi for Zeroconf (Bonjour) Support
