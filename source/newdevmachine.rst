@@ -112,7 +112,8 @@ Install dotfiles::
 Install some dev requirements::
 
 	$ brew install python postgresql nginx memcached
-	
+        
+        $ . ~/.bashrc
 	$ easy_install pip
 
 Clone TextMate themes::
