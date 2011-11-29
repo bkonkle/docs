@@ -52,47 +52,27 @@
 <div class="section" id="general-config">
 <h2>General config<a class="headerlink" href="#general-config" title="Permalink to this headline">¶</a></h2>
 <p>Run Software Update</p>
-<p>Start downloading <a class="reference external" href="http://developer.apple.com/iphone">XCode</a></p>
-<p>Setup MobileMe syncing</p>
+<p>Setup iCloud syncing</p>
 <p>Clean up dock</p>
 <p>Change default Finder &#8220;Arrange by&#8221; to &#8220;Name&#8221;</p>
 <p>Increase the keyboard repeat rate</p>
 </div>
 <div class="section" id="install-apps">
 <h2>Install apps<a class="headerlink" href="#install-apps" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://magicprefs.com/">MagicPrefs</a></p>
+<p>Begin the installation of App Store apps in the background.</p>
 <p><a class="reference external" href="https://www.dropbox.com/downloading?os=mac">Dropbox</a></p>
 <ul class="simple">
 <li>Change Dropbox menubar color</li>
 </ul>
 <p><a class="reference external" href="http://agilewebsolutions.com/downloads/1Password3">1Password</a></p>
-<p><a class="reference external" href="http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac">Chrome</a> and make default browser</p>
-<ul class="simple">
-<li>Set up Chrome sync</li>
-<li><a class="reference external" href="https://chrome.google.com/extensions/detail/ddngkjbldiejbheifcmnfmmfiniimbbg">JSON extension</a></li>
-<li><a class="reference external" href="https://chrome.google.com/extensions/detail/nlbjncdgjeocebhnmkbbbdekmmmcbfjd">RSS extension</a></li>
-<li><a class="reference external" href="http://forum.agile.ws/index.php?/topic/56-setup-instructions/">1Password extension</a></li>
-</ul>
-<p><a class="reference external" href="http://www.sparrowmailapp.com/">Sparrow Mail</a></p>
-<p><a class="reference external" href="http://macromates.com">TextMate</a></p>
-<p><a class="reference external" href="http://www.marketcircle.com/billings/downloads/">Billings</a></p>
-<p><a class="reference external" href="http://adium.im/">Adium</a></p>
-<ul class="simple">
-<li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/7365">AdiumIcon</a></li>
-<li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/6515">Pretty Simple Contact List</a></li>
-<li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/6938">Pretty Simple Message</a></li>
-<li><a class="reference external" href="adiumxtra://www.adiumxtras.com/download/7200">Duckalicious</a></li>
-</ul>
-<p><a class="reference external" href="http://www.echofon.com/twitter/mac/bin/Echofon.dmg">Echofon</a></p>
+<p><a class="reference external" href="http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac">Chrome</a></p>
 <p><a class="reference external" href="http://www.mozilla.com/en-US/firefox/firefox.html">Firefox</a></p>
 <ul class="simple">
 <li><a class="reference external" href="http://getfirebug.com/">FireBug</a></li>
 </ul>
-<p><a class="reference external" href="http://growl.info">Growl</a></p>
-<p><a class="reference external" href="http://ditchnet.org/httpclient/">HTTP Client</a></p>
+<p><a class="reference external" href="http://macromates.com">TextMate</a></p>
 <p>iLife</p>
 <p>iWork</p>
-<p>Xcode (hopefully it&#8217;s done downloading by now)</p>
 </div>
 <div class="section" id="configure-development-environment">
 <h2>Configure development environment<a class="headerlink" href="#configure-development-environment" title="Permalink to this headline">¶</a></h2>
@@ -124,10 +104,11 @@
 </pre></div>
 </div>
 <p>Install some dev requirements:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python postgresql nginx memcached
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python --universal --framework
+    <span class="nv">$ </span>brew install postgresql nginx memcached
 
-<span class="nv">$ </span>. ~/.bashrc
-<span class="nv">$ </span>easy_install pip
+    <span class="nv">$ </span>. ~/.bashrc
+    <span class="nv">$ </span>easy_install pip
 </pre></div>
 </div>
 <p>Clone TextMate themes:</p>
@@ -206,7 +187,7 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -237,7 +218,7 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

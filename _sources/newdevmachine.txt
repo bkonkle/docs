@@ -10,9 +10,7 @@ General config
 
 Run Software Update
 
-Start downloading `XCode <http://developer.apple.com/iphone>`_
-
-Setup MobileMe syncing
+Setup iCloud syncing
 
 Clean up dock
 
@@ -23,7 +21,7 @@ Increase the keyboard repeat rate
 Install apps
 ************
 
-`MagicPrefs <http://magicprefs.com/>`_
+Begin the installation of App Store apps in the background.
 
 `Dropbox <https://www.dropbox.com/downloading?os=mac>`_
 
@@ -31,47 +29,17 @@ Install apps
 
 `1Password <http://agilewebsolutions.com/downloads/1Password3>`_
 
-`Chrome <http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac>`_ and make default browser
-
-* Set up Chrome sync
-
-* `JSON extension <https://chrome.google.com/extensions/detail/ddngkjbldiejbheifcmnfmmfiniimbbg>`_
-
-* `RSS extension <https://chrome.google.com/extensions/detail/nlbjncdgjeocebhnmkbbbdekmmmcbfjd>`_
-
-* `1Password extension <http://forum.agile.ws/index.php?/topic/56-setup-instructions/>`_
-
-`Sparrow Mail <http://www.sparrowmailapp.com/>`_
-
-`TextMate <http://macromates.com>`_
-
-`Billings <http://www.marketcircle.com/billings/downloads/>`_
-
-`Adium <http://adium.im/>`_
-
-* `AdiumIcon <adiumxtra://www.adiumxtras.com/download/7365>`_
-
-* `Pretty Simple Contact List <adiumxtra://www.adiumxtras.com/download/6515>`_
-
-* `Pretty Simple Message <adiumxtra://www.adiumxtras.com/download/6938>`_
-
-* `Duckalicious <adiumxtra://www.adiumxtras.com/download/7200>`_
-
-`Echofon <http://www.echofon.com/twitter/mac/bin/Echofon.dmg>`_
+`Chrome <http://www.google.com/chrome/intl/en/eula_dev.html?dl=mac>`_
 
 `Firefox <http://www.mozilla.com/en-US/firefox/firefox.html>`_
 
 * `FireBug <http://getfirebug.com/>`_
 
-`Growl <http://growl.info>`_
-
-`HTTP Client <http://ditchnet.org/httpclient/>`_
+`TextMate <http://macromates.com>`_
 
 iLife
 
 iWork
-
-Xcode (hopefully it's done downloading by now)
 
 Configure development environment
 *********************************
@@ -111,7 +79,8 @@ Install dotfiles::
 
 Install some dev requirements::
 
-	$ brew install python postgresql nginx memcached
+    $ brew install python --universal --framework
+	$ brew install postgresql nginx memcached
         
         $ . ~/.bashrc
 	$ easy_install pip
