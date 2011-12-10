@@ -70,6 +70,53 @@ make html
 </pre></div>
 </div>
 </div>
+<div class="section" id="pre-commit-pep-8-checking">
+<h3>Pre-Commit: PEP 8 Checking<a class="headerlink" href="#pre-commit-pep-8-checking" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>#!/usr/bin/env python
+from __future__ import with_statement
+import os
+import re
+import shutil
+import subprocess
+import sys
+import tempfile</p>
+<dl class="docutils">
+<dt>def system(<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt>
+<dd>kwargs.setdefault(&#8216;stdout&#8217;, subprocess.PIPE)
+proc = subprocess.Popen(args, <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs)
+out, err = proc.communicate()
+return out</dd>
+<dt>def main():</dt>
+<dd><p class="first">modified = re.compile(&#8216;^[AM]+s+(?P&lt;name&gt;.*.py)&#8217;, re.MULTILINE)
+files = system(&#8216;git&#8217;, &#8216;status&#8217;, &#8216;&#8211;porcelain&#8217;)
+files = modified.findall(files)</p>
+<p>tempdir = tempfile.mkdtemp()
+for name in files:</p>
+<blockquote>
+<div><p>filename = os.path.join(tempdir, name)
+filepath = os.path.dirname(filename)
+if not os.path.exists(filepath):</p>
+<blockquote>
+<div>os.makedirs(filepath)</div></blockquote>
+<dl class="docutils">
+<dt>with file(filename, &#8216;w&#8217;) as f:</dt>
+<dd>system(&#8216;git&#8217;, &#8216;show&#8217;, &#8216;:&#8217; + name, stdout=f)</dd>
+</dl>
+</div></blockquote>
+<p>output = system(&#8216;pep8&#8217;, &#8216;.&#8217;, cwd=tempdir)
+shutil.rmtree(tempdir)
+if output:</p>
+<blockquote class="last">
+<div>print &#8216;Commit aborted for pep8 issues:&#8217;
+print output,
+sys.exit(1)</div></blockquote>
+</dd>
+<dt>if __name__ == &#8216;__main__&#8217;:</dt>
+<dd>main()</dd>
+</dl>
+</div></blockquote>
+</div>
 </div>
 <div class="section" id="convert-git-svn-tags-to-actual-tags">
 <h2>Convert Git-Svn Tags to Actual Tags<a class="headerlink" href="#convert-git-svn-tags-to-actual-tags" title="Permalink to this headline">¶</a></h2>
@@ -134,6 +181,7 @@ make html
 <li><a class="reference internal" href="#">Snippets</a><ul>
 <li><a class="reference internal" href="#git-hooks">Git Hooks</a><ul>
 <li><a class="reference internal" href="#pre-commit-build-add-sphinx-docs">Pre-Commit: Build &amp; Add Sphinx Docs</a></li>
+<li><a class="reference internal" href="#pre-commit-pep-8-checking">Pre-Commit: PEP 8 Checking</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#convert-git-svn-tags-to-actual-tags">Convert Git-Svn Tags to Actual Tags</a></li>
