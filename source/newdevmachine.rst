@@ -5,6 +5,10 @@ New Dev Machine Setup
 
 .. highlight:: sh
 
+I like to keep my machines squeaky-clean, so I tend to format my system
+partition every 6 months or so.  I keep this doc around so to remind me how to
+reinstall everything.
+
 General config
 **************
 
@@ -46,48 +50,56 @@ Configure development environment
 
 Configure Terminal
 
-* Start with Pro as the base
+* Install the `Tomorrow Theme <https://github.com/ChrisKempson/Tomorrow-Theme>`_
 
-* Change font to Menlo Regular 11pt
-
-* Uncheck "Use bold fonts"
-
-* Check "Use bright colors"
+* Change font to Menlo Regular 12pt
 
 * On the *Shell* tab, select "Close if the shell exited cleanly"
 
 * On the *Keyboard* tab, check "Use option as meta key"
 
+* Give the background color 95% transparency
+
+* Change the window size to 100 x 50 for iMac, or 100 x 40 for Macbook.
+
 * Save as default
+
+Rsync .ssh config::
+
+    $ rsync -avz myserver:~/.ssh/ ~/.ssh/
 
 Install Homebrew::
 
-	$ ruby -e "$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)"
+	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
 
 Install some packages::
 
-	$ brew install git hub git-flow bash-completion
+	$ brew install git hub git-flow wget
+
+Install oh-my-zsh::
+
+	$ wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
 
 Install dotfiles::
 
 	$ cd ~
 	$ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
 	$ cd .dotfiles
-	$ echo myreallylongapikeykeyfromgit > gitapikey
+	$ scp myserver:~/path/to/apikeys.rb ./
 	$ rake install
-	$ . ~/.bashrc
+
+Restart terminal.
 
 Install some dev requirements::
 
-    $ brew install python --universal --framework
-	$ brew install postgresql nginx memcached
+    $ brew install python postgresql nginx memcached redis
+    
+Install the launch agents for each, changing RunAtLoad to OnDemand.  Then
+install some Python packages.
         
-        $ . ~/.bashrc
 	$ easy_install pip
-
-Clone TextMate themes::
-
-	$ git clone bkonkle/TextMate-Themes ~/Library/Application\ Support/TextMate/Themes
+	
+	$ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
 
 GeoDjango
 *********

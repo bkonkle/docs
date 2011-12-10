@@ -2,13 +2,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>New Dev Machine Setup &mdash; bkonkle v1.0 documentation</title>
+    <title>New Dev Machine Setup &mdash; bkonkle 1.0 documentation</title>
+    
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -21,7 +24,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="bkonkle v1.0 documentation" href="index.html" />
+    <link rel="top" title="bkonkle 1.0 documentation" href="index.html" />
     <link rel="next" title="Manual Server Setup" href="serversetup.html" />
     <link rel="prev" title="Home Server Setup" href="homeserversetup.html" /> 
   </head>
@@ -38,7 +41,7 @@
         <li class="right" >
           <a href="homeserversetup.html" title="Home Server Setup"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bkonkle 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -49,6 +52,9 @@
             
   <div class="section" id="new-dev-machine-setup">
 <span id="newdevmachine"></span><h1>New Dev Machine Setup<a class="headerlink" href="#new-dev-machine-setup" title="Permalink to this headline">¶</a></h1>
+<p>I like to keep my machines squeaky-clean, so I tend to format my system
+partition every 6 months or so.  I keep this doc around so to remind me how to
+reinstall everything.</p>
 <div class="section" id="general-config">
 <h2>General config<a class="headerlink" href="#general-config" title="Permalink to this headline">¶</a></h2>
 <p>Run Software Update</p>
@@ -78,43 +84,49 @@
 <h2>Configure development environment<a class="headerlink" href="#configure-development-environment" title="Permalink to this headline">¶</a></h2>
 <p>Configure Terminal</p>
 <ul class="simple">
-<li>Start with Pro as the base</li>
-<li>Change font to Menlo Regular 11pt</li>
-<li>Uncheck &#8220;Use bold fonts&#8221;</li>
-<li>Check &#8220;Use bright colors&#8221;</li>
+<li>Install the <a class="reference external" href="https://github.com/ChrisKempson/Tomorrow-Theme">Tomorrow Theme</a></li>
+<li>Change font to Menlo Regular 12pt</li>
 <li>On the <em>Shell</em> tab, select &#8220;Close if the shell exited cleanly&#8221;</li>
 <li>On the <em>Keyboard</em> tab, check &#8220;Use option as meta key&#8221;</li>
+<li>Give the background color 95% transparency</li>
+<li>Change the window size to 100 x 50 for iMac, or 100 x 40 for Macbook.</li>
 <li>Save as default</li>
 </ul>
+<p>Rsync .ssh config:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>rsync -avz myserver:~/.ssh/ ~/.ssh/
+</pre></div>
+</div>
 <p>Install Homebrew:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>ruby -e <span class="s2">&quot;$(curl -fsSL https://gist.github.com/raw/323731/install_homebrew.rb)&quot;</span>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>/usr/bin/ruby -e <span class="s2">&quot;$(curl -fsSL https://raw.github.com/gist/323731)&quot;</span>
 </pre></div>
 </div>
 <p>Install some packages:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git hub git-flow bash-completion
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git hub git-flow wget
+</pre></div>
+</div>
+<p>Install oh-my-zsh:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
 </pre></div>
 </div>
 <p>Install dotfiles:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd</span> ~
 <span class="nv">$ </span>git clone http://github.com/bkonkle/dotfiles.git .dotfiles
 <span class="nv">$ </span><span class="nb">cd</span> .dotfiles
-<span class="nv">$ </span><span class="nb">echo </span>myreallylongapikeykeyfromgit &gt; gitapikey
+<span class="nv">$ </span>scp myserver:~/path/to/apikeys.rb ./
 <span class="nv">$ </span>rake install
-<span class="nv">$ </span>. ~/.bashrc
 </pre></div>
 </div>
+<p>Restart terminal.</p>
 <p>Install some dev requirements:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python --universal --framework
-    <span class="nv">$ </span>brew install postgresql nginx memcached
-
-    <span class="nv">$ </span>. ~/.bashrc
-    <span class="nv">$ </span>easy_install pip
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python postgresql nginx memcached redis
 </pre></div>
 </div>
-<p>Clone TextMate themes:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>git clone bkonkle/TextMate-Themes ~/Library/Application<span class="se">\ </span>Support/TextMate/Themes
-</pre></div>
-</div>
+<p>Install the launch agents for each, changing RunAtLoad to OnDemand.  Then
+install some Python packages.</p>
+<blockquote>
+<div><p>$ easy_install pip</p>
+<p>$ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper</p>
+</div></blockquote>
 </div>
 <div class="section" id="geodjango">
 <h2>GeoDjango<a class="headerlink" href="#geodjango" title="Permalink to this headline">¶</a></h2>
@@ -213,12 +225,12 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
         <li class="right" >
           <a href="homeserversetup.html" title="Home Server Setup"
              >previous</a> |</li>
-        <li><a href="index.html">bkonkle v1.0 documentation</a> &raquo;</li> 
+        <li><a href="index.html">bkonkle 1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
