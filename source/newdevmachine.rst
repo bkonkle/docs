@@ -20,7 +20,7 @@ Clean up dock
 
 Change default Finder "Arrange by" to "Name"
 
-Increase the keyboard repeat rate
+Increase the keyboard repeat rate and decrease the delay
 
 Install apps
 ************
@@ -39,11 +39,16 @@ Begin the installation of App Store apps in the background.
 
 * `FireBug <http://getfirebug.com/>`_
 
-`TextMate <http://macromates.com>`_
+`Sublime Text 2 <http://www.sublimetext.com/2>`_
+
+* `Package Control <http://wbond.net/sublime_packages/package_control>`_
+* SublimeLinter
+* Djaneiro
+* Nginx
+* Less
+* SCSS
 
 iLife
-
-iWork
 
 Configure development environment
 *********************************
@@ -70,36 +75,40 @@ Rsync .ssh config::
 
 Install Homebrew::
 
-	$ /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/gist/323731)"
+    $ /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 
 Install some packages::
 
-	$ brew install git hub git-flow wget
+    $ brew install git git-flow wget
 
 Install oh-my-zsh::
 
-	$ wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+    $ wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
 
 Install dotfiles::
 
-	$ cd ~
-	$ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
-	$ cd .dotfiles
-	$ scp myserver:~/path/to/apikeys.rb ./
-	$ rake install
+    $ cd ~
+    $ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
+    $ cd .dotfiles
+    $ scp myserver:~/path/to/apikeys.rb ./
+    $ rake install
 
-Restart terminal.
+Restart the terminal.
 
 Install some dev requirements::
 
     $ brew install python postgresql nginx memcached redis
-    
-Install the launch agents for each, changing RunAtLoad to OnDemand.  Then
-install some Python packages.
-        
-	$ easy_install pip
-	
-	$ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
+
+Restart the terminal again.
+
+Install the launch agents for each, setting RunAtLoad and KeepAlive to false.
+Then install some Python packages::
+
+    $ easy_install pip
+
+    $ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
+
+Restart the terminal one last time.
 
 GeoDjango
 *********
@@ -118,26 +127,6 @@ Set up a template for new postgis databases::
     psql -d template_postgis -f $POSTGIS_SQL_PATH/spatial_ref_sys.sql
     psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;" # Enabling users to alter spatial tables.
     psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
-
-Install TextMate plugins
-************************
-
-`MissingSidebar <http://github.com/jezdez/textmate-missingdrawer/>`_
-
-`AckMate <http://github.com/protocool/AckMate>`_
-
-GetBundles::
-
-	$ mkdir -p ~/Library/Application\ Support/TextMate/Bundles
-	$ cd !$
-	$ svn co http://svn.textmate.org/trunk/Review/Bundles/GetBundles.tmbundle/
-	$ osascript -e 'tell app "TextMate" to reload bundles'
-
-Install Python Django (by adamv)
-
-Install Django Templates (by adamv)
-
-Install reStructuredText
 
 Finishing up
 ************

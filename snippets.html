@@ -72,50 +72,48 @@ make html
 </div>
 <div class="section" id="pre-commit-pep-8-checking">
 <h3>Pre-Commit: PEP 8 Checking<a class="headerlink" href="#pre-commit-pep-8-checking" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><p>#!/usr/bin/env python
+<div class="highlight-sh"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
 from __future__ import with_statement
 import os
 import re
 import shutil
 import subprocess
 import sys
-import tempfile</p>
-<dl class="docutils">
-<dt>def system(<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt>
-<dd>kwargs.setdefault(&#8216;stdout&#8217;, subprocess.PIPE)
-proc = subprocess.Popen(args, <a href="#id5"><span class="problematic" id="id6">**</span></a>kwargs)
-out, err = proc.communicate()
-return out</dd>
-<dt>def main():</dt>
-<dd><p class="first">modified = re.compile(&#8216;^[AM]+s+(?P&lt;name&gt;.*.py)&#8217;, re.MULTILINE)
-files = system(&#8216;git&#8217;, &#8216;status&#8217;, &#8216;&#8211;porcelain&#8217;)
-files = modified.findall(files)</p>
-<p>tempdir = tempfile.mkdtemp()
-for name in files:</p>
-<blockquote>
-<div><p>filename = os.path.join(tempdir, name)
-filepath = os.path.dirname(filename)
-if not os.path.exists(filepath):</p>
-<blockquote>
-<div>os.makedirs(filepath)</div></blockquote>
-<dl class="docutils">
-<dt>with file(filename, &#8216;w&#8217;) as f:</dt>
-<dd>system(&#8216;git&#8217;, &#8216;show&#8217;, &#8216;:&#8217; + name, stdout=f)</dd>
-</dl>
-</div></blockquote>
-<p>output = system(&#8216;pep8&#8217;, &#8216;.&#8217;, cwd=tempdir)
-shutil.rmtree(tempdir)
-if output:</p>
-<blockquote class="last">
-<div>print &#8216;Commit aborted for pep8 issues:&#8217;
-print output,
-sys.exit(1)</div></blockquote>
-</dd>
-<dt>if __name__ == &#8216;__main__&#8217;:</dt>
-<dd>main()</dd>
-</dl>
-</div></blockquote>
+import tempfile
+
+
+def system<span class="o">(</span>*args, **kwargs<span class="o">)</span>:
+    kwargs.setdefault<span class="o">(</span><span class="s1">&#39;stdout&#39;</span>, subprocess.PIPE<span class="o">)</span>
+    <span class="nv">proc</span> <span class="o">=</span> subprocess.Popen<span class="o">(</span>args, **kwargs<span class="o">)</span>
+    out, <span class="nv">err</span> <span class="o">=</span> proc.communicate<span class="o">()</span>
+    <span class="k">return </span>out
+
+
+def main<span class="o">()</span>:
+    <span class="nv">modified</span> <span class="o">=</span> re.compile<span class="o">(</span><span class="s1">&#39;^[AM]+\s+(?P&lt;name&gt;.*\.py)&#39;</span>, re.MULTILINE<span class="o">)</span>
+    <span class="nv">files</span> <span class="o">=</span> system<span class="o">(</span><span class="s1">&#39;git&#39;</span>, <span class="s1">&#39;status&#39;</span>, <span class="s1">&#39;--porcelain&#39;</span><span class="o">)</span>
+    <span class="nv">files</span> <span class="o">=</span> modified.findall<span class="o">(</span>files<span class="o">)</span>
+
+    <span class="nv">tempdir</span> <span class="o">=</span> tempfile.mkdtemp<span class="o">()</span>
+    <span class="k">for </span>name in files:
+        <span class="nv">filename</span> <span class="o">=</span> os.path.join<span class="o">(</span>tempdir, name<span class="o">)</span>
+        <span class="nv">filepath</span> <span class="o">=</span> os.path.dirname<span class="o">(</span>filename<span class="o">)</span>
+        <span class="k">if </span>not os.path.exists<span class="o">(</span>filepath<span class="o">)</span>:
+            os.makedirs<span class="o">(</span>filepath<span class="o">)</span>
+        with file<span class="o">(</span>filename, <span class="s1">&#39;w&#39;</span><span class="o">)</span> as f:
+            system<span class="o">(</span><span class="s1">&#39;git&#39;</span>, <span class="s1">&#39;show&#39;</span>, <span class="s1">&#39;:&#39;</span> + name, <span class="nv">stdout</span><span class="o">=</span>f<span class="o">)</span>
+    <span class="nv">output</span> <span class="o">=</span> system<span class="o">(</span><span class="s1">&#39;pep8&#39;</span>, <span class="s1">&#39;.&#39;</span>, <span class="nv">cwd</span><span class="o">=</span>tempdir<span class="o">)</span>
+    shutil.rmtree<span class="o">(</span>tempdir<span class="o">)</span>
+    <span class="k">if </span>output:
+        print <span class="s1">&#39;Commit aborted for pep8 issues:&#39;</span>
+        print output,
+        sys.exit<span class="o">(</span>1<span class="o">)</span>
+
+
+<span class="k">if </span><span class="nv">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span>:
+    main<span class="o">()</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="convert-git-svn-tags-to-actual-tags">

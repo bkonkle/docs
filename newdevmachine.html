@@ -61,7 +61,7 @@ reinstall everything.</p>
 <p>Setup iCloud syncing</p>
 <p>Clean up dock</p>
 <p>Change default Finder &#8220;Arrange by&#8221; to &#8220;Name&#8221;</p>
-<p>Increase the keyboard repeat rate</p>
+<p>Increase the keyboard repeat rate and decrease the delay</p>
 </div>
 <div class="section" id="install-apps">
 <h2>Install apps<a class="headerlink" href="#install-apps" title="Permalink to this headline">¶</a></h2>
@@ -76,9 +76,16 @@ reinstall everything.</p>
 <ul class="simple">
 <li><a class="reference external" href="http://getfirebug.com/">FireBug</a></li>
 </ul>
-<p><a class="reference external" href="http://macromates.com">TextMate</a></p>
+<p><a class="reference external" href="http://www.sublimetext.com/2">Sublime Text 2</a></p>
+<ul class="simple">
+<li><a class="reference external" href="http://wbond.net/sublime_packages/package_control">Package Control</a></li>
+<li>SublimeLinter</li>
+<li>Djaneiro</li>
+<li>Nginx</li>
+<li>Less</li>
+<li>SCSS</li>
+</ul>
 <p>iLife</p>
-<p>iWork</p>
 </div>
 <div class="section" id="configure-development-environment">
 <h2>Configure development environment<a class="headerlink" href="#configure-development-environment" title="Permalink to this headline">¶</a></h2>
@@ -97,11 +104,11 @@ reinstall everything.</p>
 </pre></div>
 </div>
 <p>Install Homebrew:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>/usr/bin/ruby -e <span class="s2">&quot;$(curl -fsSL https://raw.github.com/gist/323731)&quot;</span>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>/usr/bin/ruby -e <span class="s2">&quot;$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)&quot;</span>
 </pre></div>
 </div>
 <p>Install some packages:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git hub git-flow wget
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install git git-flow wget
 </pre></div>
 </div>
 <p>Install oh-my-zsh:</p>
@@ -116,17 +123,20 @@ reinstall everything.</p>
 <span class="nv">$ </span>rake install
 </pre></div>
 </div>
-<p>Restart terminal.</p>
+<p>Restart the terminal.</p>
 <p>Install some dev requirements:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python postgresql nginx memcached redis
 </pre></div>
 </div>
-<p>Install the launch agents for each, changing RunAtLoad to OnDemand.  Then
-install some Python packages.</p>
-<blockquote>
-<div><p>$ easy_install pip</p>
-<p>$ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper</p>
-</div></blockquote>
+<p>Restart the terminal again.</p>
+<p>Install the launch agents for each, setting RunAtLoad and KeepAlive to false.
+Then install some Python packages:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>easy_install pip
+
+<span class="nv">$ PIP_REQUIRE_VIRTUALENV</span><span class="o">=</span> pip install virtualenv virtualenvwrapper
+</pre></div>
+</div>
+<p>Restart the terminal one last time.</p>
 </div>
 <div class="section" id="geodjango">
 <h2>GeoDjango<a class="headerlink" href="#geodjango" title="Permalink to this headline">¶</a></h2>
@@ -145,20 +155,6 @@ psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON geometry_columns
 psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON spatial_ref_sys TO PUBLIC;&quot;</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="install-textmate-plugins">
-<h2>Install TextMate plugins<a class="headerlink" href="#install-textmate-plugins" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://github.com/jezdez/textmate-missingdrawer/">MissingSidebar</a></p>
-<p><a class="reference external" href="http://github.com/protocool/AckMate">AckMate</a></p>
-<p>GetBundles:</p>
-<div class="highlight-sh"><pre>$ mkdir -p ~/Library/Application\ Support/TextMate/Bundles
-$ cd !$
-$ svn co http://svn.textmate.org/trunk/Review/Bundles/GetBundles.tmbundle/
-$ osascript -e 'tell app "TextMate" to reload bundles'</pre>
-</div>
-<p>Install Python Django (by adamv)</p>
-<p>Install Django Templates (by adamv)</p>
-<p>Install reStructuredText</p>
 </div>
 <div class="section" id="finishing-up">
 <h2>Finishing up<a class="headerlink" href="#finishing-up" title="Permalink to this headline">¶</a></h2>
@@ -179,7 +175,6 @@ $ osascript -e 'tell app "TextMate" to reload bundles'</pre>
 <li><a class="reference internal" href="#install-apps">Install apps</a></li>
 <li><a class="reference internal" href="#configure-development-environment">Configure development environment</a></li>
 <li><a class="reference internal" href="#geodjango">GeoDjango</a></li>
-<li><a class="reference internal" href="#install-textmate-plugins">Install TextMate plugins</a></li>
 <li><a class="reference internal" href="#finishing-up">Finishing up</a></li>
 </ul>
 </li>

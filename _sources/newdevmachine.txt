@@ -75,23 +75,23 @@ Rsync .ssh config::
 
 Install Homebrew::
 
-	$ /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
+    $ /usr/bin/ruby -e "$(/usr/bin/curl -fksSL https://raw.github.com/mxcl/homebrew/master/Library/Contributions/install_homebrew.rb)"
 
 Install some packages::
 
-	$ brew install git git-flow wget
+    $ brew install git git-flow wget
 
 Install oh-my-zsh::
 
-	$ wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
+    $ wget --no-check-certificate https://github.com/bkonkle/oh-my-zsh/raw/master/tools/install.sh -O - | sh
 
 Install dotfiles::
 
-	$ cd ~
-	$ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
-	$ cd .dotfiles
-	$ scp myserver:~/path/to/apikeys.rb ./
-	$ rake install
+    $ cd ~
+    $ git clone http://github.com/bkonkle/dotfiles.git .dotfiles
+    $ cd .dotfiles
+    $ scp myserver:~/path/to/apikeys.rb ./
+    $ rake install
 
 Restart the terminal.
 
@@ -101,12 +101,12 @@ Install some dev requirements::
 
 Restart the terminal again.
 
-Install the launch agents for each, changing RunAtLoad to OnDemand.  Then
-install some Python packages.
+Install the launch agents for each, setting RunAtLoad and KeepAlive to false.
+Then install some Python packages::
 
-	$ easy_install pip
+    $ easy_install pip
 
-	$ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
+    $ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
 
 Restart the terminal one last time.
 
