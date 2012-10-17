@@ -11,16 +11,17 @@ stack based on nginx and uwsgi, hosted on Rackspace Cloud.
 Initial Setup
 -------------
 
-Create an Ubuntu 10.10 (Maverick) server instance.  Once the build is complete,
+Create an Ubuntu 12.10 (Precise) server instance.  Once the build is complete,
 log in and install emacs.  Configure it as the default::
 
+    $ apt-get update
 	$ apt-get install emacs23-nox
 	$ update-alternatives --config editor
 
 Set up sudo access::
 
     $ visudo
-    
+
 Under this line:
 
 .. code-block:: none
@@ -33,18 +34,18 @@ Add the following lines to preserve editor and Django environment settings:
 
     Defaults        env_keep += "EDITOR VISUAL"
     Defaults        env_keep += "DJANGO_SETTINGS_MODULE PYTHONPATH"
-    
-Then, under this line:
+
+Then, change this line:
 
 .. code-block:: none
 
-    %sudo   ALL=(ALL) ALL
+    %admin ALL=(ALL) ALL
 
 Add:
 
 .. code-block:: none
 
-    %admin  ALL=(ALL) NOPASSWD:ALL
+    %admin ALL=(ALL) NOPASSWD:ALL
 
 Now, add a new user and the admin group::
 
@@ -67,7 +68,6 @@ and invoke sudo with no problems.  You can now lock down the root account::
 
 Upgrade anything that's out of date::
 
-    $ sudo apt-get update
     $ sudo apt-get dist-upgrade
 
 Install various packages that are often useful::
@@ -85,7 +85,7 @@ Also, it's a good idea to disable password auth for SSH::
 
 Reload the SSH config::
 
-    $ sudo /etc/init.d/ssh reload
+    $ sudo reload ssh
 
 Database Servers
 ----------------
@@ -106,16 +106,9 @@ First, set your locale since Rackspace doesn't set a default::
 
 	$ sudo update-locale LANG=en_US.UTF-8 && export LANG=en_US.UTF-8
 
-For a standard install::
+Install Postgres::
 
-    $ sudo apt-get install postgresql postgresql-server-dev-8.4 postgresql-contrib-8.4
-
-If you want to use streaming replication::
-
-    $ sudo apt-get install python-software-properties
-    $ sudo add-apt-repository ppa:pitti/postgresql
-    $ sudo apt-get update
-    $ sudo apt-get install postgresql postgresql-server-dev-9.0 postgresql-contrib-9.0
+    $ sudo apt-get install postgresql postgresql-server-dev-9.1 postgresql-contrib-9.1
 
 Set a password for the *postgresql* user::
 
@@ -136,34 +129,35 @@ Set up a new user for the site being deployed on this instance::
 Change the access settings::
 
     $ sudo emacs /etc/postgresql/8.4/main/pg_hba.conf
-    
-Add the line below.  This restricts access to only allow other instances on the
-public Rackspace Cloud.  This will likely need to be edited for each project.
+
+Add a line like the one below. Use a CIDR calculator to find the right value
+to use. The example below would allow addresses in the range 10.180.29.112 to
+10.180.29.127::
 
 .. code-block:: cfg
 
-    host    all         all         184.106.0.0/16        md5
+    host    all         all         10.180.29.112/28        md5
 
 Edit the configuration file::
-    
-    $ sudo emacs /etc/postgresql/8.4/main/postgresql.conf
+
+    $ sudo emacs /etc/postgresql/9.1/main/postgresql.conf
 
 Consider changing the following settings:
 
 .. code-block:: cfg
 
     listen_addresses = '<server IP>'
-    
+
     max_connections = 250
-    
+
     ssl = false
-    
+
     shared_buffers = <Divide the amount of RAM by 4 and use the value here>
-    
+
     work_mem = 8MB
-    
+
     checkpoint_segments = 24
-    
+
     effective_cache_size = <Divide the amount of RAM by 2>
 
 You will likely need to raise the kernel's SHMMAX parameter.  To find out how
@@ -177,7 +171,7 @@ You should see something like this:
 
 .. code-block:: none
 
-     * Restarting PostgreSQL 8.4 database server
+     * Restarting PostgreSQL 9.1 database server
      * The PostgreSQL server failed to start. Please check the log output:
     2010-11-07 23:15:24 UTC FATAL:  could not create shared memory segment: Invalid argument
     2010-11-07 23:15:24 UTC DETAIL:  Failed system call was shmget(key=5432001, size=282058752, 03600).
@@ -248,7 +242,7 @@ Also, copy the utils from the *postgis* tar package to a subdirectory of
     $ wget http://postgis.refractions.net/download/postgis-1.5.2.tar.gz
     $ tar -xzf postgis-1.5.2.tar.gz
     $ cd postgis-1.5.2
-    
+
     $ sudo mkdir /usr/local/share/postgresql-8.4-postgis/
     $ sudo cp -r utils /usr/local/share/postgresql-8.4-postgis/
 
@@ -266,7 +260,7 @@ step::
 
     $ id -u postgres
     104
-    
+
     $ id -g postgres
     108
 
@@ -282,9 +276,9 @@ of Rackspace's custom kernels::
 Comment out these lines::
 
     # See if our running kernel supports the NFS kernel server
-    if [ -f /proc/kallsyms ] && ! grep -qE ' nfsd_serv     ' /proc/kallsyms; then      
-           log_warning_msg "Not starting $DESC: no support in current kernel."         
-           exit 0                                                                      
+    if [ -f /proc/kallsyms ] && ! grep -qE ' nfsd_serv     ' /proc/kallsyms; then
+           log_warning_msg "Not starting $DESC: no support in current kernel."
+           exit 0
     fi
 
 Continue setting up NFS::
@@ -320,7 +314,7 @@ there::
 
     $ sudo apt-get install nfs-common portmap
     $ sudo emacs /etc/fstab
-    
+
 Add a line like this:
 
 .. code-block:: none
@@ -348,11 +342,11 @@ Primary
 Edit *postgresql.conf* to enable WAL archiving::
 
     wal_level = hot_standby
-    
+
     archive_mode = on
-    
+
     archive_command = 'cp -i %p /var/backups/postgres/mysite/%f </dev/null'
-    
+
     max_wal_senders = 1
 
 Create a superuser for streaming replication::
@@ -448,12 +442,12 @@ On the standby, query the table:
 .. code-block:: sql
 
     SELECT * FROM test;
-    
+
 You should see the following output:
 
 .. code-block:: none
 
-         test      
+         test
     ---------------
      Testing 1 2 3
     (1 row)
@@ -479,125 +473,71 @@ Install supervisord with apt-get::
 
     $ sudo apt-get install supervisor
 
-uWSGI
-*****
-
-uWSGI needs to be compiled from source.  Install some requirements first,
-though::
-
-    sudo apt-get install build-essential python-dev libxml2-dev
-    wget http://projects.unbit.it/downloads/uwsgi-0.9.6.5.tar.gz
-    tar -xzf uwsgi-0.9.6.5.tar.gz
-    cd uwsgi-0.9.6.5
-    make -f Makefile.Py26
-    
-Copy the executable to the local sbin directory::
-
-    $ sudo cp uwsgi /usr/local/sbin
-
-Also, copy the default uwsgi settings to the /etc/nginx directory::
-
-    sudo mkdir /etc/nginx
-    sudo cp nginx/uwsgi_params /etc/nginx
-    cd ..
-
 Nginx
 *****
 
-First, install build dependencies and grab the source::
+Install Nginx with apt-get::
 
-    $ sudo apt-get install libssl-dev
-    $ sudo apt-get build-dep nginx
-    $ apt-get source nginx
-    $ cd nginx-0.7*
-
-Define the ``CONFIGURE_OPTS`` environment variable when building the package to
-add *uwsgi* and *ssl*::
-    
-    $ CONFIGURE_OPTS="--add-module=../uwsgi-0.9.6.5/nginx --with-http_ssl_module" dpkg-buildpackage
-    $ cd ..
-    $ sudo dpkg -i nginx*.deb
-    $ echo "nginx hold" | sudo dpkg --set-selections
-    $ echo "nginx-dbg hold" | sudo dpkg --set-selections
-    
-Starting with nginx-0.8.41, you can add
---http-uwsgi-temp-path=/var/lib/nginx/uwsgi to the ``CONFIGURE_OPTS`` so that
-the temp files are kept in the right place. Until then, you'll need to create a
-*/usr/local/nginx/uwsgi_temp* folder to use for the temp files::
-
-    $ sudo mkdir -p /usr/local/nginx/uwsgi_temp
+    $ sudo apt-get install nginx
 
 Git
 ***
 
-Install the most recent version of git from the PPA::
+Install Git with apt-get::
 
-    $ sudo add-apt-repository ppa:git-core/ppa
-    $ sudo apt-get update
     $ sudo apt-get install git-core
+
+PIL
+***
+
+Install the system PIL and psycopg2 packages::
+
+    $ sudo apt-get install python-imaging python-psycopg2
+
 
 Site Setup
 ----------
 
-Basic Setup
+Virtualenv
 ***********
+
+Install Virtualenv::
+
+    $ sudo apt-get install build-essential python-dev libpq-dev
+    $ sudo apt-get install python-pip
+    $ sudo pip install virtualenv
 
 Set up the directory structure::
 
-	$ sudo mkdir /sites
-	$ sudo chown myuser:admin /sites
-	$ cd /sites
-	$ mkdir -p mydomain.com/{code,public,logs,backup}
-	$ cd mydomain.com
-	$ sudo chown :www-data logs public
-	$ sudo chmod g+w logs public
+	$ sudo mkdir /opt/webapps
+	$ sudo chown myuser:admin /opt/webapps
+    $ cd /opt/webapps
 
-Check out the site::
+Setup a virtualenv for your site::
 
-	$ git clone user@mygithost.com:/path/to/repository.git code/
+    $ virtualenv --system-site-packages projectname
+    $ cd projectname
+    $ . bin/activate
 
-Link media into the public directory, if needed::
+    $ mkdir -p {public/media,public/static,log}
+    $ sudo chown -R :www-data log public
+    $ sudo chmod -R g+w log public
 
-	$ cd public
-	$ ln -s ../code/projectname/media
-	$ sudo chown :www-data media
-	$ sudo chmod g+w media
+Install your app::
 
-Virtualenvs
-***********
+    $ pip install -e git+git@github.com:username/projectname.git#egg=projectname
 
-Setup virtualenvs and create a directory to hold them::
+Install your project's requirements::
 
-	$ sudo apt-get install build-essential python-dev libpq-dev
-	$ sudo apt-get install python-setuptools
-	$ sudo easy_install -U pip
-	$ sudo pip install virtualenv
-	$ sudo pip install virtualenvwrapper
-	$ mkdir /sites/virtualenvs
+    $ pip install -r src/projectname/requirements.pip
 
-Edit .bashrc::
+Also install uWSGI inside the virtualenv::
 
-	$ emacs ~/.bashrc
-	
-	# Virtualenvwrapper
-	export WORKON_HOME=/sites/.virtualenvs
-	source /usr/local/bin/virtualenvwrapper.sh
+    $ pip install uwsgi
 
-Then, back in the shell::
+Then deactivate the virtualenv::
 
-	$ . ~/.bashrc
-	$ mkvirtualenv --no-site-packages projectname
-	$ workon projectname
-	$ pip install -r /sites/mydomain.com/code/requirements.txt
-	$ deactivate
-
-Install the Ubuntu PIL package, and symlink it into the environment::
-
-	$ sudo apt-get install python-imaging
-	$ workon projectname
-	$ cdsitepackages
-	$ ln -s /usr/lib/python2.6/dist-packages/PIL
-	$ ln -s /usr/lib/python2.6/dist-packages/PIL.pth
+    $ deactivate
 
 Utilities
 *********
@@ -615,8 +555,6 @@ Nginx Configuration
 
 Add an nginx.conf to your source control::
 
-	$ emacs /sites/mydomain.com/code/deploy/nginx.conf
-
 .. code-block:: nginx
 
 	upstream myapp {
@@ -624,7 +562,7 @@ Add an nginx.conf to your source control::
 	    server 10.1.2.4:10000;
 	    server 10.1.2.5:10000;
 	}
-	
+
 	server {
 	  listen 80;
 	  server_name www.mydomain.com;
@@ -635,12 +573,16 @@ Add an nginx.conf to your source control::
 	  listen 80;
 	  server_name mydomain.com;
 
-	  access_log /sites/mydomain.com/logs/access.log;
-	  error_log /sites/mydomain.com/logs/error.log;
+	  access_log /opt/webapps/projectname/log/access.log;
+	  error_log /opt/webapps/projectname/log/error.log;
 
 	  location /media {
-	    root /sites/mydomain.com/public;
-	  }
+        root /opt/webapps/projectname/public;
+      }
+
+      location /static {
+        root /opt/webapps/projectname/public;
+      }
 
 	  location / {
 	    uwsgi_pass myapp;
@@ -650,47 +592,50 @@ Add an nginx.conf to your source control::
 
 Symlink it into */etc/nginx/sites-available/* and *sites-enabled/*::
 
-	$ sudo ln -s /sites/mydomain.com/code/deploy/nginx.conf /etc/nginx/sites-available/mydomain.com
-	$ sudo ln -s /etc/nginx/sites-available/mydomain.com /etc/nginx/sites-enabled/mydomain.com
+	$ sudo ln -s /opt/webapps/performance/src/performance/conf/server/nginx.conf /etc/nginx/sites-available/projectname
+	$ sudo ln -s /etc/nginx/sites-available/projectname /etc/nginx/sites-enabled/projectname
 	$ sudo /etc/init.d/nginx restart
 
 Supervisor & uWSGI
 ******************
 
-Add a file to */etc/supervisor/conf.d*::
-
-	$ sudo emacs /etc/supervisor/conf.d/mysite.conf
+Add a supervisor.conf to your source control::
 
 .. code-block:: cfg
 
 	[program:myapp]
-	command=/usr/local/sbin/uwsgi
-	  --home /sites/virtualenvs/myapp/
-	  --module myapp.deploy.wsgi
+	command=/opt/webapps/projectname/bin/uwsgi
+	  --home /opt/webapps/projectname
+	  --module projectname.wsgi
 	  --socket 10.1.2.3:10000
-	  --pythonpath /sites/myapp.com/code/myapp
 	  --processes 5
 	  --master
-	directory=/sites/myapp.com/code/myapp
-	environment=DJANGO_SETTINGS_MODULE='myapp.settings'
+	directory=/opt/webapps/projectname
 	user=www-data
 	autostart=true
 	autorestart=true
-	stdout_logfile=/sites/myapp.com/logs/uwsgi.log
+	stdout_logfile=/opt/webapps/projectname/log/uwsgi.log
 	redirect_stderr=true
 	stopsignal=QUIT
 
-The module specified in the --module option simply contains:
+The module specified in the --module option shoule be supplied by startproject
+now, but if not it simply contains:
 
 .. code-block:: python
 
-	from django.core.handlers.wsgi import WSGIHandler
+	import os
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "projectname.settings")
 
-	application = WSGIHandler()
+    from django.core.wsgi import get_wsgi_application
+    application = get_wsgi_application()
 
 If you're just using uWSGI on localhost, you can use something like ``--socket
 /sites/myapp.com/var/run/myapp.sock`` instead of an IP address to avoid the
 overhead of the full TCP stack.
+
+Symlink the file to */etc/supervisor/conf.d*::
+
+    $ sudo ln -s /opt/webapps/performance/src/performance/conf/server/supervisor.conf /etc/supervisor/conf.d/projectname.conf
 
 Reload the uWSGI config and update processes by running::
 

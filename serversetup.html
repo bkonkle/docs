@@ -56,10 +56,11 @@
 stack based on nginx and uwsgi, hosted on Rackspace Cloud.</p>
 <div class="section" id="initial-setup">
 <h2>Initial Setup<a class="headerlink" href="#initial-setup" title="Permalink to this headline">¶</a></h2>
-<p>Create an Ubuntu 10.10 (Maverick) server instance.  Once the build is complete,
+<p>Create an Ubuntu 12.10 (Precise) server instance.  Once the build is complete,
 log in and install emacs.  Configure it as the default:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>apt-get install emacs23-nox
-<span class="nv">$ </span>update-alternatives --config editor
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>apt-get update
+    <span class="nv">$ </span>apt-get install emacs23-nox
+    <span class="nv">$ </span>update-alternatives --config editor
 </pre></div>
 </div>
 <p>Set up sudo access:</p>
@@ -75,12 +76,12 @@ log in and install emacs.  Configure it as the default:</p>
 Defaults        env_keep += &quot;DJANGO_SETTINGS_MODULE PYTHONPATH&quot;
 </pre></div>
 </div>
-<p>Then, under this line:</p>
-<div class="highlight-none"><div class="highlight"><pre>%sudo   ALL=(ALL) ALL
+<p>Then, change this line:</p>
+<div class="highlight-none"><div class="highlight"><pre>%admin ALL=(ALL) ALL
 </pre></div>
 </div>
 <p>Add:</p>
-<div class="highlight-none"><div class="highlight"><pre>%admin  ALL=(ALL) NOPASSWD:ALL
+<div class="highlight-none"><div class="highlight"><pre>%admin ALL=(ALL) NOPASSWD:ALL
 </pre></div>
 </div>
 <p>Now, add a new user and the admin group:</p>
@@ -102,8 +103,7 @@ and invoke sudo with no problems.  You can now lock down the root account:</p>
 </pre></div>
 </div>
 <p>Upgrade anything that&#8217;s out of date:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get update
-<span class="nv">$ </span>sudo apt-get dist-upgrade
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get dist-upgrade
 </pre></div>
 </div>
 <p>Install various packages that are often useful:</p>
@@ -120,7 +120,7 @@ UsePAM no
 </pre></div>
 </div>
 <p>Reload the SSH config:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo /etc/init.d/ssh reload
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo reload ssh
 </pre></div>
 </div>
 </div>
@@ -139,15 +139,8 @@ UsePAM no
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo update-locale <span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8 <span class="o">&amp;&amp;</span> <span class="nb">export </span><span class="nv">LANG</span><span class="o">=</span>en_US.UTF-8
 </pre></div>
 </div>
-<p>For a standard install:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install postgresql postgresql-server-dev-8.4 postgresql-contrib-8.4
-</pre></div>
-</div>
-<p>If you want to use streaming replication:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-software-properties
-<span class="nv">$ </span>sudo add-apt-repository ppa:pitti/postgresql
-<span class="nv">$ </span>sudo apt-get update
-<span class="nv">$ </span>sudo apt-get install postgresql postgresql-server-dev-9.0 postgresql-contrib-9.0
+<p>Install Postgres:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install postgresql postgresql-server-dev-9.1 postgresql-contrib-9.1
 </pre></div>
 </div>
 <p>Set a password for the <em>postgresql</em> user:</p>
@@ -170,12 +163,16 @@ UsePAM no
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/postgresql/8.4/main/pg_hba.conf
 </pre></div>
 </div>
-<p>Add the line below.  This restricts access to only allow other instances on the
-public Rackspace Cloud.  This will likely need to be edited for each project.</p>
-<div class="highlight-cfg"><pre>host    all         all         184.106.0.0/16        md5</pre>
+<p>Add a line like the one below. Use a CIDR calculator to find the right value
+to use. The example below would allow addresses in the range 10.180.29.112 to
+10.180.29.127:</p>
+<div class="highlight-sh"><div class="highlight"><pre>.. code-block:: cfg
+</pre></div>
 </div>
+<blockquote>
+<div>host    all         all         10.180.29.112/28        md5</div></blockquote>
 <p>Edit the configuration file:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/postgresql/8.4/main/postgresql.conf
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/postgresql/9.1/main/postgresql.conf
 </pre></div>
 </div>
 <p>Consider changing the following settings:</p>
@@ -200,7 +197,7 @@ much it needs to be changed to, try to restart <em>postgres</em>.</p>
 </pre></div>
 </div>
 <p>You should see something like this:</p>
-<div class="highlight-none"><div class="highlight"><pre> * Restarting PostgreSQL 8.4 database server
+<div class="highlight-none"><div class="highlight"><pre> * Restarting PostgreSQL 9.1 database server
  * The PostgreSQL server failed to start. Please check the log output:
 2010-11-07 23:15:24 UTC FATAL:  could not create shared memory segment: Invalid argument
 2010-11-07 23:15:24 UTC DETAIL:  Failed system call was shmget(key=5432001, size=282058752, 03600).
@@ -473,123 +470,68 @@ you see a wal sender process.  On the standby run <tt class="docutils literal"><
 </pre></div>
 </div>
 </div>
-<div class="section" id="uwsgi">
-<h3>uWSGI<a class="headerlink" href="#uwsgi" title="Permalink to this headline">¶</a></h3>
-<p>uWSGI needs to be compiled from source.  Install some requirements first,
-though:</p>
-<div class="highlight-sh"><div class="highlight"><pre>sudo apt-get install build-essential python-dev libxml2-dev
-wget http://projects.unbit.it/downloads/uwsgi-0.9.6.5.tar.gz
-tar -xzf uwsgi-0.9.6.5.tar.gz
-<span class="nb">cd </span>uwsgi-0.9.6.5
-make -f Makefile.Py26
-</pre></div>
-</div>
-<p>Copy the executable to the local sbin directory:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo cp uwsgi /usr/local/sbin
-</pre></div>
-</div>
-<p>Also, copy the default uwsgi settings to the /etc/nginx directory:</p>
-<div class="highlight-sh"><div class="highlight"><pre>sudo mkdir /etc/nginx
-sudo cp nginx/uwsgi_params /etc/nginx
-<span class="nb">cd</span> ..
-</pre></div>
-</div>
-</div>
 <div class="section" id="nginx">
 <h3>Nginx<a class="headerlink" href="#nginx" title="Permalink to this headline">¶</a></h3>
-<p>First, install build dependencies and grab the source:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install libssl-dev
-<span class="nv">$ </span>sudo apt-get build-dep nginx
-<span class="nv">$ </span>apt-get <span class="nb">source </span>nginx
-<span class="nv">$ </span><span class="nb">cd </span>nginx-0.7*
-</pre></div>
-</div>
-<p>Define the <tt class="docutils literal"><span class="pre">CONFIGURE_OPTS</span></tt> environment variable when building the package to
-add <em>uwsgi</em> and <em>ssl</em>:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ CONFIGURE_OPTS</span><span class="o">=</span><span class="s2">&quot;--add-module=../uwsgi-0.9.6.5/nginx --with-http_ssl_module&quot;</span> dpkg-buildpackage
-<span class="nv">$ </span><span class="nb">cd</span> ..
-<span class="nv">$ </span>sudo dpkg -i nginx*.deb
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;nginx hold&quot;</span> | sudo dpkg --set-selections
-<span class="nv">$ </span><span class="nb">echo</span> <span class="s2">&quot;nginx-dbg hold&quot;</span> | sudo dpkg --set-selections
-</pre></div>
-</div>
-<p>Starting with nginx-0.8.41, you can add
-&#8211;http-uwsgi-temp-path=/var/lib/nginx/uwsgi to the <tt class="docutils literal"><span class="pre">CONFIGURE_OPTS</span></tt> so that
-the temp files are kept in the right place. Until then, you&#8217;ll need to create a
-<em>/usr/local/nginx/uwsgi_temp</em> folder to use for the temp files:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo mkdir -p /usr/local/nginx/uwsgi_temp
+<p>Install Nginx with apt-get:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install nginx
 </pre></div>
 </div>
 </div>
 <div class="section" id="git">
 <h3>Git<a class="headerlink" href="#git" title="Permalink to this headline">¶</a></h3>
-<p>Install the most recent version of git from the PPA:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo add-apt-repository ppa:git-core/ppa
-<span class="nv">$ </span>sudo apt-get update
-<span class="nv">$ </span>sudo apt-get install git-core
+<p>Install Git with apt-get:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install git-core
+</pre></div>
+</div>
+</div>
+<div class="section" id="pil">
+<h3>PIL<a class="headerlink" href="#pil" title="Permalink to this headline">¶</a></h3>
+<p>Install the system PIL and psycopg2 packages:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-imaging python-psycopg2
 </pre></div>
 </div>
 </div>
 </div>
 <div class="section" id="site-setup">
 <h2>Site Setup<a class="headerlink" href="#site-setup" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="basic-setup">
-<h3>Basic Setup<a class="headerlink" href="#basic-setup" title="Permalink to this headline">¶</a></h3>
-<p>Set up the directory structure:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo mkdir /sites
-<span class="nv">$ </span>sudo chown myuser:admin /sites
-<span class="nv">$ </span><span class="nb">cd</span> /sites
-<span class="nv">$ </span>mkdir -p mydomain.com/<span class="o">{</span>code,public,logs,backup<span class="o">}</span>
-<span class="nv">$ </span><span class="nb">cd </span>mydomain.com
-<span class="nv">$ </span>sudo chown :www-data logs public
-<span class="nv">$ </span>sudo chmod g+w logs public
-</pre></div>
-</div>
-<p>Check out the site:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>git clone user@mygithost.com:/path/to/repository.git code/
-</pre></div>
-</div>
-<p>Link media into the public directory, if needed:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span><span class="nb">cd </span>public
-<span class="nv">$ </span>ln -s ../code/projectname/media
-<span class="nv">$ </span>sudo chown :www-data media
-<span class="nv">$ </span>sudo chmod g+w media
-</pre></div>
-</div>
-</div>
-<div class="section" id="virtualenvs">
-<h3>Virtualenvs<a class="headerlink" href="#virtualenvs" title="Permalink to this headline">¶</a></h3>
-<p>Setup virtualenvs and create a directory to hold them:</p>
+<div class="section" id="virtualenv">
+<h3>Virtualenv<a class="headerlink" href="#virtualenv" title="Permalink to this headline">¶</a></h3>
+<p>Install Virtualenv:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install build-essential python-dev libpq-dev
-<span class="nv">$ </span>sudo apt-get install python-setuptools
-<span class="nv">$ </span>sudo easy_install -U pip
+<span class="nv">$ </span>sudo apt-get install python-pip
 <span class="nv">$ </span>sudo pip install virtualenv
-<span class="nv">$ </span>sudo pip install virtualenvwrapper
-<span class="nv">$ </span>mkdir /sites/virtualenvs
 </pre></div>
 </div>
-<p>Edit .bashrc:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>emacs ~/.bashrc
+<p>Set up the directory structure:</p>
+<div class="highlight-sh"><div class="highlight"><pre>    <span class="nv">$ </span>sudo mkdir /opt/webapps
+    <span class="nv">$ </span>sudo chown myuser:admin /opt/webapps
+<span class="nv">$ </span><span class="nb">cd</span> /opt/webapps
+</pre></div>
+</div>
+<p>Setup a virtualenv for your site:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>virtualenv --system-site-packages projectname
+<span class="nv">$ </span><span class="nb">cd </span>projectname
+<span class="nv">$ </span>. bin/activate
 
-<span class="c"># Virtualenvwrapper</span>
-<span class="nb">export </span><span class="nv">WORKON_HOME</span><span class="o">=</span>/sites/.virtualenvs
-<span class="nb">source</span> /usr/local/bin/virtualenvwrapper.sh
+<span class="nv">$ </span>mkdir -p <span class="o">{</span>public/media,public/static,log<span class="o">}</span>
+<span class="nv">$ </span>sudo chown -R :www-data log public
+<span class="nv">$ </span>sudo chmod -R g+w log public
 </pre></div>
 </div>
-<p>Then, back in the shell:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>. ~/.bashrc
-<span class="nv">$ </span>mkvirtualenv --no-site-packages projectname
-<span class="nv">$ </span>workon projectname
-<span class="nv">$ </span>pip install -r /sites/mydomain.com/code/requirements.txt
-<span class="nv">$ </span>deactivate
+<p>Install your app:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>pip install -e git+git@github.com:username/projectname.git#egg<span class="o">=</span>projectname
 </pre></div>
 </div>
-<p>Install the Ubuntu PIL package, and symlink it into the environment:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo apt-get install python-imaging
-<span class="nv">$ </span>workon projectname
-<span class="nv">$ </span>cdsitepackages
-<span class="nv">$ </span>ln -s /usr/lib/python2.6/dist-packages/PIL
-<span class="nv">$ </span>ln -s /usr/lib/python2.6/dist-packages/PIL.pth
+<p>Install your project&#8217;s requirements:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>pip install -r src/projectname/requirements.pip
+</pre></div>
+</div>
+<p>Also install uWSGI inside the virtualenv:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>pip install uwsgi
+</pre></div>
+</div>
+<p>Then deactivate the virtualenv:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>deactivate
 </pre></div>
 </div>
 </div>
@@ -607,79 +549,103 @@ the temp files are kept in the right place. Until then, you&#8217;ll need to cre
 <div class="section" id="nginx-configuration">
 <h3>Nginx Configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline">¶</a></h3>
 <p>Add an nginx.conf to your source control:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>emacs /sites/mydomain.com/code/deploy/nginx.conf
+<div class="highlight-sh"><div class="highlight"><pre>.. code-block:: nginx
 </pre></div>
 </div>
-<div class="highlight-nginx"><div class="highlight"><pre><span class="k">upstream</span> <span class="s">myapp</span> <span class="p">{</span>
-    <span class="kn">server</span> <span class="n">10.1.2.3</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
-    <span class="kn">server</span> <span class="n">10.1.2.4</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
-    <span class="kn">server</span> <span class="n">10.1.2.5</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">server</span> <span class="p">{</span>
-  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
-  <span class="kn">server_name</span> <span class="s">www.mydomain.com</span><span class="p">;</span>
-  <span class="kn">rewrite</span> <span class="s">^/(.*)</span> <span class="s">http://mydomain.com/</span><span class="nv">$1</span> <span class="s">permanent</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="k">server</span> <span class="p">{</span>
-  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
-  <span class="kn">server_name</span> <span class="s">mydomain.com</span><span class="p">;</span>
-
-  <span class="kn">access_log</span> <span class="s">/sites/mydomain.com/logs/access.log</span><span class="p">;</span>
-  <span class="kn">error_log</span> <span class="s">/sites/mydomain.com/logs/error.log</span><span class="p">;</span>
-
-  <span class="kn">location</span> <span class="s">/media</span> <span class="p">{</span>
-    <span class="kn">root</span> <span class="s">/sites/mydomain.com/public</span><span class="p">;</span>
-  <span class="p">}</span>
-
-  <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
-    <span class="kn">uwsgi_pass</span> <span class="s">myapp</span><span class="p">;</span>
-        <span class="kn">include</span> <span class="s">uwsgi_params</span><span class="p">;</span>
-  <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-</div>
+<blockquote>
+<div><blockquote>
+<div><dl class="docutils">
+<dt>upstream myapp {</dt>
+<dd>server 10.1.2.3:10000;
+server 10.1.2.4:10000;
+server 10.1.2.5:10000;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>server {</dt>
+<dd>listen 80;
+server_name www.mydomain.com;
+rewrite ^/(.*) <a class="reference external" href="http://mydomain.com/$1">http://mydomain.com/$1</a> permanent;</dd>
+</dl>
+<p>}</p>
+<dl class="docutils">
+<dt>server {</dt>
+<dd><p class="first">listen 80;
+server_name mydomain.com;</p>
+<p>access_log /opt/webapps/projectname/log/access.log;
+error_log /opt/webapps/projectname/log/error.log;</p>
+<p class="last">location /media {</p>
+</dd>
+</dl>
+<p>root /opt/webapps/projectname/public;</p>
+</div></blockquote>
+<p>}</p>
+<dl class="docutils">
+<dt>location /static {</dt>
+<dd>root /opt/webapps/projectname/public;</dd>
+</dl>
+<p>}</p>
+<blockquote>
+<div><blockquote>
+<div><dl class="docutils">
+<dt>location / {</dt>
+<dd><dl class="first last docutils">
+<dt>uwsgi_pass myapp;</dt>
+<dd>include uwsgi_params;</dd>
+</dl>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+</div></blockquote>
+</div></blockquote>
 <p>Symlink it into <em>/etc/nginx/sites-available/</em> and <em>sites-enabled/</em>:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ln -s /sites/mydomain.com/code/deploy/nginx.conf /etc/nginx/sites-available/mydomain.com
-<span class="nv">$ </span>sudo ln -s /etc/nginx/sites-available/mydomain.com /etc/nginx/sites-enabled/mydomain.com
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ln -s /opt/webapps/performance/src/performance/conf/server/nginx.conf /etc/nginx/sites-available/projectname
+<span class="nv">$ </span>sudo ln -s /etc/nginx/sites-available/projectname /etc/nginx/sites-enabled/projectname
 <span class="nv">$ </span>sudo /etc/init.d/nginx restart
 </pre></div>
 </div>
 </div>
 <div class="section" id="supervisor-uwsgi">
 <h3>Supervisor &amp; uWSGI<a class="headerlink" href="#supervisor-uwsgi" title="Permalink to this headline">¶</a></h3>
-<p>Add a file to <em>/etc/supervisor/conf.d</em>:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo emacs /etc/supervisor/conf.d/mysite.conf
+<p>Add a supervisor.conf to your source control:</p>
+<div class="highlight-sh"><div class="highlight"><pre>.. code-block:: cfg
 </pre></div>
 </div>
-<div class="highlight-cfg"><div class="highlight"><pre><span class="k">[program:myapp]</span>
-<span class="na">command</span><span class="o">=</span><span class="s">/usr/local/sbin/uwsgi</span>
-<span class="s">  --home /sites/virtualenvs/myapp/</span>
-<span class="s">  --module myapp.deploy.wsgi</span>
-<span class="s">  --socket 10.1.2.3:10000</span>
-<span class="s">  --pythonpath /sites/myapp.com/code/myapp</span>
-<span class="s">  --processes 5</span>
-<span class="s">  --master</span>
-<span class="na">directory</span><span class="o">=</span><span class="s">/sites/myapp.com/code/myapp</span>
-<span class="na">environment</span><span class="o">=</span><span class="s">DJANGO_SETTINGS_MODULE=&#39;myapp.settings&#39;</span>
-<span class="na">user</span><span class="o">=</span><span class="s">www-data</span>
-<span class="na">autostart</span><span class="o">=</span><span class="s">true</span>
-<span class="na">autorestart</span><span class="o">=</span><span class="s">true</span>
-<span class="na">stdout_logfile</span><span class="o">=</span><span class="s">/sites/myapp.com/logs/uwsgi.log</span>
-<span class="na">redirect_stderr</span><span class="o">=</span><span class="s">true</span>
-<span class="na">stopsignal</span><span class="o">=</span><span class="s">QUIT</span>
-</pre></div>
-</div>
-<p>The module specified in the &#8211;module option simply contains:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">django.core.handlers.wsgi</span> <span class="kn">import</span> <span class="n">WSGIHandler</span>
+<blockquote>
+<div><p>[program:myapp]
+command=/opt/webapps/projectname/bin/uwsgi</p>
+<blockquote>
+<div>&#8211;home /opt/webapps/projectname
+&#8211;module projectname.wsgi
+&#8211;socket 10.1.2.3:10000
+&#8211;processes 5
+&#8211;master</div></blockquote>
+<p>directory=/opt/webapps/projectname
+user=www-data
+autostart=true
+autorestart=true
+stdout_logfile=/opt/webapps/projectname/log/uwsgi.log
+redirect_stderr=true
+stopsignal=QUIT</p>
+</div></blockquote>
+<p>The module specified in the &#8211;module option shoule be supplied by startproject
+now, but if not it simply contains:</p>
+<div class="highlight-python"><div class="highlight"><pre>    <span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s">&quot;DJANGO_SETTINGS_MODULE&quot;</span><span class="p">,</span> <span class="s">&quot;projectname.settings&quot;</span><span class="p">)</span>
 
-<span class="n">application</span> <span class="o">=</span> <span class="n">WSGIHandler</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">django.core.wsgi</span> <span class="kn">import</span> <span class="n">get_wsgi_application</span>
+<span class="n">application</span> <span class="o">=</span> <span class="n">get_wsgi_application</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>If you&#8217;re just using uWSGI on localhost, you can use something like <tt class="docutils literal"><span class="pre">--socket</span>
 <span class="pre">/sites/myapp.com/var/run/myapp.sock</span></tt> instead of an IP address to avoid the
 overhead of the full TCP stack.</p>
+<p>Symlink the file to <em>/etc/supervisor/conf.d</em>:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ln -s /opt/webapps/performance/src/performance/conf/server/supervisor.conf /etc/supervisor/conf.d/projectname.conf
+</pre></div>
+</div>
 <p>Reload the uWSGI config and update processes by running:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo supervisorctl update
 </pre></div>
@@ -720,14 +686,13 @@ overhead of the full TCP stack.</p>
 <li><a class="reference internal" href="#web-servers">Web Servers</a><ul>
 <li><a class="reference internal" href="#postfix-and-geodjango">Postfix and GeoDjango</a></li>
 <li><a class="reference internal" href="#supervisord">Supervisord</a></li>
-<li><a class="reference internal" href="#uwsgi">uWSGI</a></li>
 <li><a class="reference internal" href="#nginx">Nginx</a></li>
 <li><a class="reference internal" href="#git">Git</a></li>
+<li><a class="reference internal" href="#pil">PIL</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#site-setup">Site Setup</a><ul>
-<li><a class="reference internal" href="#basic-setup">Basic Setup</a></li>
-<li><a class="reference internal" href="#virtualenvs">Virtualenvs</a></li>
+<li><a class="reference internal" href="#virtualenv">Virtualenv</a></li>
 <li><a class="reference internal" href="#utilities">Utilities</a></li>
 <li><a class="reference internal" href="#nginx-configuration">Nginx Configuration</a></li>
 <li><a class="reference internal" href="#supervisor-uwsgi">Supervisor &amp; uWSGI</a></li>
