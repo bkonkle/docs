@@ -549,57 +549,40 @@ you see a wal sender process.  On the standby run <tt class="docutils literal"><
 <div class="section" id="nginx-configuration">
 <h3>Nginx Configuration<a class="headerlink" href="#nginx-configuration" title="Permalink to this headline">¶</a></h3>
 <p>Add an nginx.conf to your source control:</p>
-<div class="highlight-sh"><div class="highlight"><pre>.. code-block:: nginx
+<div class="highlight-nginx"><div class="highlight"><pre>  <span class="k">upstream</span> <span class="s">myapp</span> <span class="p">{</span>
+      <span class="kn">server</span> <span class="n">10.1.2.3</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+      <span class="kn">server</span> <span class="n">10.1.2.4</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+      <span class="kn">server</span> <span class="n">10.1.2.5</span><span class="p">:</span><span class="mi">10000</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">www.mydomain.com</span><span class="p">;</span>
+    <span class="kn">rewrite</span> <span class="s">^/(.*)</span> <span class="s">http://mydomain.com/</span><span class="nv">$1</span> <span class="s">permanent</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">mydomain.com</span><span class="p">;</span>
+
+    <span class="kn">access_log</span> <span class="s">/opt/webapps/projectname/log/access.log</span><span class="p">;</span>
+    <span class="kn">error_log</span> <span class="s">/opt/webapps/projectname/log/error.log</span><span class="p">;</span>
+
+    <span class="kn">location</span> <span class="s">/media</span> <span class="p">{</span>
+  <span class="kn">root</span> <span class="s">/opt/webapps/projectname/public</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kn">location</span> <span class="s">/static</span> <span class="p">{</span>
+  <span class="kn">root</span> <span class="s">/opt/webapps/projectname/public</span><span class="p">;</span>
+<span class="p">}</span>
+
+    <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+      <span class="kn">uwsgi_pass</span> <span class="s">myapp</span><span class="p">;</span>
+          <span class="kn">include</span> <span class="s">uwsgi_params</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 </pre></div>
 </div>
-<blockquote>
-<div><blockquote>
-<div><dl class="docutils">
-<dt>upstream myapp {</dt>
-<dd>server 10.1.2.3:10000;
-server 10.1.2.4:10000;
-server 10.1.2.5:10000;</dd>
-</dl>
-<p>}</p>
-<dl class="docutils">
-<dt>server {</dt>
-<dd>listen 80;
-server_name www.mydomain.com;
-rewrite ^/(.*) <a class="reference external" href="http://mydomain.com/$1">http://mydomain.com/$1</a> permanent;</dd>
-</dl>
-<p>}</p>
-<dl class="docutils">
-<dt>server {</dt>
-<dd><p class="first">listen 80;
-server_name mydomain.com;</p>
-<p>access_log /opt/webapps/projectname/log/access.log;
-error_log /opt/webapps/projectname/log/error.log;</p>
-<p class="last">location /media {</p>
-</dd>
-</dl>
-<p>root /opt/webapps/projectname/public;</p>
-</div></blockquote>
-<p>}</p>
-<dl class="docutils">
-<dt>location /static {</dt>
-<dd>root /opt/webapps/projectname/public;</dd>
-</dl>
-<p>}</p>
-<blockquote>
-<div><blockquote>
-<div><dl class="docutils">
-<dt>location / {</dt>
-<dd><dl class="first last docutils">
-<dt>uwsgi_pass myapp;</dt>
-<dd>include uwsgi_params;</dd>
-</dl>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
-<p>}</p>
-</div></blockquote>
-</div></blockquote>
 <p>Symlink it into <em>/etc/nginx/sites-available/</em> and <em>sites-enabled/</em>:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo ln -s /opt/webapps/performance/src/performance/conf/server/nginx.conf /etc/nginx/sites-available/projectname
 <span class="nv">$ </span>sudo ln -s /etc/nginx/sites-available/projectname /etc/nginx/sites-enabled/projectname

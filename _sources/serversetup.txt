@@ -553,7 +553,7 @@ Install ntpdate to keep the server's clock in sync::
 Nginx Configuration
 *******************
 
-Add an nginx.conf to your source control::
+Add an nginx.conf to your source control:
 
 .. code-block:: nginx
 
