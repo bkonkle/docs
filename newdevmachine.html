@@ -1,4 +1,3 @@
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -14,7 +13,7 @@
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
+        URL_ROOT:    './',
         VERSION:     '1.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -141,11 +140,12 @@ Then install some Python packages:</p>
 <div class="section" id="geodjango">
 <h2>GeoDjango<a class="headerlink" href="#geodjango" title="Permalink to this headline">¶</a></h2>
 <p>If you&#8217;re using GeoDjango, install the requirements with Homebrew:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install geos proj postgis gdal
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ PIP_REQUIRE_VIRTUALENV</span><span class="o">=</span> pip install numpy
+<span class="nv">$ </span>brew install geos proj postgis gdal
 </pre></div>
 </div>
 <p>Set up a template for new postgis databases:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">POSTGIS_SQL_PATH</span><span class="o">=</span><span class="sb">`</span>pg_config --sharedir<span class="sb">`</span>/contrib/postgis-1.5
+<div class="highlight-sh"><div class="highlight"><pre><span class="nb">export </span><span class="nv">POSTGIS_SQL_PATH</span><span class="o">=</span>/usr/local/Cellar/postgis/2.0.3/share/postgis
 createdb -E UTF8 template_postgis
 createlang -d template_postgis plpgsql
 psql -d postgres -c <span class="s2">&quot;UPDATE pg_database SET datistemplate=&#39;true&#39; WHERE datname=&#39;template_postgis&#39;;&quot;</span>
@@ -225,7 +225,7 @@ psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON spatial_ref_sys 
     </div>
     <div class="footer">
         &copy; Copyright 2010, Brandon Konkle.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b1.
     </div>
   </body>
 </html>

@@ -115,11 +115,12 @@ GeoDjango
 
 If you're using GeoDjango, install the requirements with Homebrew::
 
+    $ PIP_REQUIRE_VIRTUALENV= pip install numpy
     $ brew install geos proj postgis gdal
 
 Set up a template for new postgis databases::
 
-    POSTGIS_SQL_PATH=`pg_config --sharedir`/contrib/postgis-1.5
+    export POSTGIS_SQL_PATH=/usr/local/Cellar/postgis/2.0.3/share/postgis
     createdb -E UTF8 template_postgis
     createlang -d template_postgis plpgsql
     psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
