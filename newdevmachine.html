@@ -144,15 +144,11 @@ Then install some Python packages:</p>
 <span class="nv">$ </span>brew install geos proj postgis gdal
 </pre></div>
 </div>
-<p>Set up a template for new postgis databases:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nb">export </span><span class="nv">POSTGIS_SQL_PATH</span><span class="o">=</span>/usr/local/Cellar/postgis/2.0.3/share/postgis
-createdb -E UTF8 template_postgis
-createlang -d template_postgis plpgsql
-psql -d postgres -c <span class="s2">&quot;UPDATE pg_database SET datistemplate=&#39;true&#39; WHERE datname=&#39;template_postgis&#39;;&quot;</span>
-psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/postgis.sql <span class="c"># Loading the PostGIS SQL routines</span>
-psql -d template_postgis -f <span class="nv">$POSTGIS_SQL_PATH</span>/spatial_ref_sys.sql
-psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON geometry_columns TO PUBLIC;&quot;</span> <span class="c"># Enabling users to alter spatial tables.</span>
-psql -d template_postgis -c <span class="s2">&quot;GRANT ALL ON spatial_ref_sys TO PUBLIC;&quot;</span>
+<p>To create new spatial databases:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>createdb  &lt;db name&gt;
+<span class="nv">$ </span>psql &lt;db name&gt;
+&gt; CREATE EXTENSION postgis;
+&gt; CREATE EXTENSION postgis_topology;
 </pre></div>
 </div>
 </div>

@@ -118,16 +118,13 @@ If you're using GeoDjango, install the requirements with Homebrew::
     $ PIP_REQUIRE_VIRTUALENV= pip install numpy
     $ brew install geos proj postgis gdal
 
-Set up a template for new postgis databases::
+To create new spatial databases::
 
-    export POSTGIS_SQL_PATH=/usr/local/Cellar/postgis/2.0.3/share/postgis
-    createdb -E UTF8 template_postgis
-    createlang -d template_postgis plpgsql
-    psql -d postgres -c "UPDATE pg_database SET datistemplate='true' WHERE datname='template_postgis';"
-    psql -d template_postgis -f $POSTGIS_SQL_PATH/postgis.sql # Loading the PostGIS SQL routines
-    psql -d template_postgis -f $POSTGIS_SQL_PATH/spatial_ref_sys.sql
-    psql -d template_postgis -c "GRANT ALL ON geometry_columns TO PUBLIC;" # Enabling users to alter spatial tables.
-    psql -d template_postgis -c "GRANT ALL ON spatial_ref_sys TO PUBLIC;"
+    $ createdb  <db name>
+    $ psql <db name>
+    > CREATE EXTENSION postgis;
+    > CREATE EXTENSION postgis_topology;
+
 
 Finishing up
 ************
