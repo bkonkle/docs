@@ -97,16 +97,19 @@ Restart the terminal.
 
 Install some dev requirements::
 
-    $ brew install python postgresql nginx memcached redis
+    $ brew install python postgresql nginx memcached redis rbenv ruby-build
 
 Restart the terminal again.
 
-Install the launch agents for each, setting RunAtLoad and KeepAlive to false.
-Then install some Python packages::
+Install some Python and Ruby requirements::
 
     $ easy_install pip
-
     $ PIP_REQUIRE_VIRTUALENV= pip install virtualenv virtualenvwrapper
+
+    $ rbenv install -l
+    $ rbenv install 1.9.3-p429  # Replace with current latest release
+    $ rbenv rehash
+    $ rbenv global 1.9.3-p429
 
 Restart the terminal one last time.
 

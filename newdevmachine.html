@@ -124,15 +124,18 @@ reinstall everything.</p>
 </div>
 <p>Restart the terminal.</p>
 <p>Install some dev requirements:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python postgresql nginx memcached redis
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>brew install python postgresql nginx memcached redis rbenv ruby-build
 </pre></div>
 </div>
 <p>Restart the terminal again.</p>
-<p>Install the launch agents for each, setting RunAtLoad and KeepAlive to false.
-Then install some Python packages:</p>
+<p>Install some Python and Ruby requirements:</p>
 <div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>easy_install pip
-
 <span class="nv">$ PIP_REQUIRE_VIRTUALENV</span><span class="o">=</span> pip install virtualenv virtualenvwrapper
+
+<span class="nv">$ </span>rbenv install -l
+<span class="nv">$ </span>rbenv install 1.9.3-p429  <span class="c"># Replace with current latest release</span>
+<span class="nv">$ </span>rbenv rehash
+<span class="nv">$ </span>rbenv global 1.9.3-p429
 </pre></div>
 </div>
 <p>Restart the terminal one last time.</p>
