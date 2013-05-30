@@ -212,8 +212,8 @@ of 282058752.  Edit sysctl.conf:</p>
 <div class="highlight-cfg"><div class="highlight"><pre><span class="na">kernel.shmmax</span><span class="o">=</span><span class="s">282058752</span>
 </pre></div>
 </div>
-<p>Then reboot the server:</p>
-<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo reboot
+<p>Now, you can adjust the value live:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo sysctl -w kernel.shmmax<span class="o">=</span>282058752
 </pre></div>
 </div>
 </div>

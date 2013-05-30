@@ -188,9 +188,9 @@ Add:
 
     kernel.shmmax=282058752
 
-Then reboot the server::
+Now, you can adjust the value live::
 
-    $ sudo reboot
+    $ sudo sysctl -w kernel.shmmax=282058752
 
 .. _geodjango:
 

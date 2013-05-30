@@ -113,6 +113,7 @@ Install some Python and Ruby requirements::
 
 Restart the terminal one last time.
 
+
 GeoDjango
 *********
 
@@ -127,6 +128,37 @@ To create new spatial databases::
     $ psql <db name>
     > CREATE EXTENSION postgis;
     > CREATE EXTENSION postgis_topology;
+
+
+Postgres
+********
+
+To get better performance out of your local postgres, edit
+*/usr/local/var/postgres/postgresql.conf* and change the following values:
+
+.. code-block:: cfg
+
+    shared_buffers = 128MB
+
+    work_mem = 8MB
+
+    checkpoint_segments = 24
+
+    effective_cache_size = 256MB
+
+You'll also need to adjust your system's shmmax and shmall values so that
+Postgres can allocate the memory it needs. Create the file */etc/sysctl.cconf*
+and add the following lines:
+
+.. code-block:: cfg
+
+    kern.sysv.shmmax=144089088
+    kern.sysv.shmall=144089088
+
+Then, change the values live::
+
+    $ sudo sysctl -w kern.sysv.shmmax=144089088
+    $ sudo sysctl -w kern.sysv.shmall=144089088
 
 
 Finishing up

@@ -155,6 +155,32 @@ reinstall everything.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="postgres">
+<h2>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h2>
+<p>To get better performance out of your local postgres, edit
+<em>/usr/local/var/postgres/postgresql.conf</em> and change the following values:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span class="na">shared_buffers</span> <span class="o">=</span> <span class="s">128MB</span>
+
+<span class="na">work_mem</span> <span class="o">=</span> <span class="s">8MB</span>
+
+<span class="na">checkpoint_segments</span> <span class="o">=</span> <span class="s">24</span>
+
+<span class="na">effective_cache_size</span> <span class="o">=</span> <span class="s">256MB</span>
+</pre></div>
+</div>
+<p>You&#8217;ll also need to adjust your system&#8217;s shmmax and shmall values so that
+Postgres can allocate the memory it needs. Create the file <em>/etc/sysctl.cconf</em>
+and add the following lines:</p>
+<div class="highlight-cfg"><div class="highlight"><pre><span class="na">kern.sysv.shmmax</span><span class="o">=</span><span class="s">144089088</span>
+<span class="na">kern.sysv.shmall</span><span class="o">=</span><span class="s">144089088</span>
+</pre></div>
+</div>
+<p>Then, change the values live:</p>
+<div class="highlight-sh"><div class="highlight"><pre><span class="nv">$ </span>sudo sysctl -w kern.sysv.shmmax<span class="o">=</span>144089088
+<span class="nv">$ </span>sudo sysctl -w kern.sysv.shmall<span class="o">=</span>144089088
+</pre></div>
+</div>
+</div>
 <div class="section" id="finishing-up">
 <h2>Finishing up<a class="headerlink" href="#finishing-up" title="Permalink to this headline">¶</a></h2>
 <p>Run Software Update again</p>
@@ -174,6 +200,7 @@ reinstall everything.</p>
 <li><a class="reference internal" href="#install-apps">Install apps</a></li>
 <li><a class="reference internal" href="#configure-development-environment">Configure development environment</a></li>
 <li><a class="reference internal" href="#geodjango">GeoDjango</a></li>
+<li><a class="reference internal" href="#postgres">Postgres</a></li>
 <li><a class="reference internal" href="#finishing-up">Finishing up</a></li>
 </ul>
 </li>
